@@ -66,7 +66,11 @@ class DeterministicLinker:
                     entity_id=node_id,
                     canonical_name=name,
                     entity_type=graph.node_types.get(node_id, "unknown"),
-                    synonyms=(),
+                    synonyms=tuple(
+                        alias
+                        for alias in [graph.node_aliases.get(node_id, name).strip()]
+                        if alias and alias.lower() != name.lower()
+                    ),
                 )
             )
         if not entries:

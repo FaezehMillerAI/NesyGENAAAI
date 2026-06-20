@@ -120,18 +120,38 @@ MIMIC-CXR. The backend supports query-only prompts and retrieval-conditioned pro
 
 ## PrimeKG cache contract
 
-`KnowledgeGraph.from_cache()` accepts an edge CSV/JSONL directly or a directory
-containing `edges.csv`, `graph.csv`, `radiology_edges.csv`, or `edges.jsonl`. Required
-edge fields are:
+The notebook maps `RUN_DATASET="iuxray_official"` and `RUN_DATASET="mimic_aug"` to:
 
 ```text
-source_id,target_id,relation,source_type,target_type,
-source_name,target_name,provenance
+/content/drive/MyDrive/primekg_radiology_cache_iuxray_official/
+/content/drive/MyDrive/primekg_radiology_cache_mimic_aug/
 ```
 
-Use only training-split seed entities when constructing a radiology cache. The loader
-retains relation and provenance fields used in explanation traces. The included helper
-can restrict a larger in-memory graph to training seeds and their one-hop neighbours.
+Each cache contains `kg.csv`, `nodes.csv`, and `radiology_primekg_summary.json`.
+`KnowledgeGraph.from_cache()` preserves the stable IDs, machine and display relations,
+node names/types, edge confidence, and source provenance used in explanation traces.
+
+The raw loader searches `/content/drive/MyDrive/dataverse_files/` in this order:
+`kg.csv`, `kg_giant.csv`, `kg_raw.csv`, then `kg_grouped.csv`. It accepts complete
+`x_id`/`y_id` edge tables or joins an index-based `edges.csv` against `nodes.csv` when a
+complete table is unavailable. Missing confidence defaults to `1.0`; missing source
+defaults to `primekg`; either relation field is copied to the other when absent.
+
+Build a frozen, training-only one-hop subset with:
+
+```bash
+python scripts/build_radiology_primekg.py \
+  --primekg-dir /content/drive/MyDrive/dataverse_files \
+  --manifest /path/to/iuxray_manifest.jsonl \
+  --output-dir /content/drive/MyDrive/primekg_radiology_cache_iuxray_official \
+  --hops 1 \
+  --seed-split train
+```
+
+The builder scans only `indication + report` from the selected split, performs exact
+normalized node-name matching, streams the large edge file during hop expansion, writes
+`node_name` to an `alias` column, and records source paths, seed policy, split, hop count,
+and graph statistics in the summary. PrimeKG never updates CheXagent/LLM parameters.
 
 ## Experiment matrix
 

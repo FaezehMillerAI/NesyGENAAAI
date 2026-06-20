@@ -1,5 +1,5 @@
 {
-  "iu_xray": {
+  "iuxray_official": {
     "raw_dataset": "/content/drive/MyDrive/iuxray/",
     "images": "/content/drive/MyDrive/iuxray/images/",
     "annotation": "/content/drive/MyDrive/iuxray/annotation.json",
@@ -8,11 +8,12 @@
     "primekg_raw": "/content/drive/MyDrive/dataverse_files/",
     "medsiglip_cache": "/content/drive/MyDrive/medsiglip_cache_iuxray_official/train_index.npz"
   },
-  "mimic_cxr": {
+  "mimic_aug": {
     "drive_dataset": "/content/drive/MyDrive/mimic_cxr_dataset/versions/2/",
     "kaggle_fallback": "/root/.cache/kagglehub/datasets/simhadrisadaram/mimic-cxr-dataset/versions/2/",
     "manifest": "/content/drive/MyDrive/aaai_2026_experiments/mimic_aug/aaai_vision_t5_base_convnext_primekg/mimic_aug_manifest.jsonl",
     "primekg_cache": "/content/drive/MyDrive/primekg_radiology_cache_mimic_aug/",
+    "primekg_raw": "/content/drive/MyDrive/dataverse_files/",
     "medsiglip_cache": "/content/drive/MyDrive/medsiglip_cache_mimic_aug/train_index.npz"
   }
 }

@@ -114,7 +114,9 @@ class AdaptiveNesyGen:
                         "source_id": edge.source_id,
                         "relation": edge.relation,
                         "target_id": edge.target_id,
-                        "provenance": edge.provenance,
+                        "display_relation": edge.display_relation,
+                        "confidence": edge.confidence,
+                        "edge_source": edge.edge_source,
                     }
                     for edge in subgraph.edges
                 ]
@@ -185,6 +187,7 @@ class AdaptiveNesyGen:
                 "end_to_end": total_ms,
             },
             graph_calls=graph_calls,
+            graph_metadata=self.graph.metadata,
         )
 
     def _decision(

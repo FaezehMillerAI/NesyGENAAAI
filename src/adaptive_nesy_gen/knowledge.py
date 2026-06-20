@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import csv
 import json
 import random
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
 
+from .primekg_io import COMPLETE_EDGE_FILES, iter_primekg_edges, load_primekg_nodes
 from .schema import Claim
 
 
@@ -17,11 +17,13 @@ class Edge:
     source_id: str
     target_id: str
     relation: str
+    display_relation: str
     source_type: str
     target_type: str
     source_name: str = ""
     target_name: str = ""
-    provenance: str = "PrimeKG"
+    confidence: float = 1.0
+    edge_source: str = "primekg"
 
 
 @dataclass(frozen=True)
@@ -34,64 +36,63 @@ class ClaimSubgraph:
 class KnowledgeGraph:
     def __init__(self, edges: list[Edge]):
         self.edges = edges
+        self.metadata: dict = {}
         self.node_types: dict[str, str] = {}
         self.node_names: dict[str, str] = {}
+        self.node_aliases: dict[str, str] = {}
+        self.node_sources: dict[str, str] = {}
         self.adjacency: dict[str, list[tuple[str, Edge]]] = defaultdict(list)
         for edge in edges:
             self.node_types[edge.source_id] = edge.source_type
             self.node_types[edge.target_id] = edge.target_type
             self.node_names[edge.source_id] = edge.source_name or edge.source_id
             self.node_names[edge.target_id] = edge.target_name or edge.target_id
+            self.node_aliases[edge.source_id] = self.node_names[edge.source_id]
+            self.node_aliases[edge.target_id] = self.node_names[edge.target_id]
             self.adjacency[edge.source_id].append((edge.target_id, edge))
             self.adjacency[edge.target_id].append((edge.source_id, edge))
 
     @classmethod
     def from_csv(cls, path: str | Path) -> KnowledgeGraph:
-        with Path(path).open(newline="", encoding="utf-8") as handle:
-            rows = list(csv.DictReader(handle))
-
-        def value(row, *names, default=""):
-            return next(
-                (str(row[name]) for name in names if row.get(name) not in {None, ""}),
-                default,
-            )
-
-        return cls(
-            [
-                Edge(
-                    source_id=value(row, "source_id", "x_id", "x_index"),
-                    target_id=value(row, "target_id", "y_id", "y_index"),
-                    relation=value(row, "relation", "display_relation"),
-                    source_type=value(row, "source_type", "x_type", default="unknown"),
-                    target_type=value(row, "target_type", "y_type", default="unknown"),
-                    source_name=value(row, "source_name", "x_name"),
-                    target_name=value(row, "target_name", "y_name"),
-                    provenance=value(row, "provenance", "source", default="PrimeKG"),
-                )
-                for row in rows
-            ]
-        )
+        return cls([Edge(**row.__dict__) for row in iter_primekg_edges(path)])
 
     @classmethod
     def from_cache(cls, path: str | Path) -> KnowledgeGraph:
         """Load a compact cache from an edge CSV/JSONL or a directory containing one."""
         path = Path(path)
+        cache_dir = path if path.is_dir() else path.parent
         if path.is_dir():
-            preferred = [
-                path / name
-                for name in ("edges.csv", "graph.csv", "radiology_edges.csv", "edges.jsonl")
-            ]
-            candidates = [candidate for candidate in preferred if candidate.exists()]
-            if not candidates:
-                candidates = sorted(path.glob("*.csv")) + sorted(path.glob("*.jsonl"))
-            if not candidates:
-                raise FileNotFoundError(f"No edge CSV/JSONL found in PrimeKG cache: {path}")
-            path = candidates[0]
+            for name in (*COMPLETE_EDGE_FILES, "graph.csv", "radiology_edges.csv", "edges.jsonl"):
+                candidate = path / name
+                if candidate.exists():
+                    path = candidate
+                    break
+            else:
+                edges_path = path / "edges.csv"
+                if edges_path.exists():
+                    path = edges_path
         if path.suffix == ".csv":
-            return cls.from_csv(path)
+            graph = cls.from_csv(path)
+            nodes_path = path.parent / "nodes.csv"
+            if nodes_path.exists():
+                _, nodes = load_primekg_nodes(nodes_path)
+                for node_id, node in nodes.items():
+                    if node_id in graph.node_types:
+                        graph.node_types[node_id] = node["node_type"]
+                        graph.node_names[node_id] = node["node_name"]
+                        graph.node_aliases[node_id] = node["alias"]
+                        graph.node_sources[node_id] = node["node_source"]
+            summary_path = cache_dir / "radiology_primekg_summary.json"
+            if summary_path.exists():
+                graph.metadata = json.loads(summary_path.read_text(encoding="utf-8"))
+            return graph
         if path.suffix == ".jsonl":
             with path.open(encoding="utf-8") as handle:
                 rows = [json.loads(line) for line in handle if line.strip()]
+            for row in rows:
+                row.setdefault("display_relation", row.get("relation", "related_to"))
+                row.setdefault("confidence", 1.0)
+                row.setdefault("edge_source", row.pop("provenance", "primekg"))
             return cls([Edge(**row) for row in rows])
         raise ValueError(f"Unsupported PrimeKG cache format: {path}")
 
@@ -100,51 +101,61 @@ class KnowledgeGraph:
         neighbours = set(training_seed_ids)
         for seed in training_seed_ids:
             neighbours.update(node for node, _ in self.adjacency.get(seed, []))
-        return KnowledgeGraph(
+        graph = KnowledgeGraph(
             [
                 edge
                 for edge in self.edges
                 if edge.source_id in neighbours and edge.target_id in neighbours
             ]
         )
+        graph.metadata = {**self.metadata, "derived_training_seed_nodes": len(training_seed_ids)}
+        return graph
 
     def relation_ablated(self) -> KnowledgeGraph:
-        return KnowledgeGraph(
+        graph = KnowledgeGraph(
             [
                 Edge(
                     source_id=edge.source_id,
                     target_id=edge.target_id,
                     relation="ablated_relation",
+                    display_relation="ablated relation",
                     source_type=edge.source_type,
                     target_type=edge.target_type,
                     source_name=edge.source_name,
                     target_name=edge.target_name,
-                    provenance=f"relation-ablated:{edge.provenance}",
+                    confidence=edge.confidence,
+                    edge_source=f"relation-ablated:{edge.edge_source}",
                 )
                 for edge in self.edges
             ]
         )
+        graph.metadata = {**self.metadata, "graph_control": "relation-ablated"}
+        return graph
 
     def shuffled(self, seed: int = 13) -> KnowledgeGraph:
         targets = [
             (edge.target_id, edge.target_type, edge.target_name) for edge in self.edges
         ]
         random.Random(seed).shuffle(targets)
-        return KnowledgeGraph(
+        graph = KnowledgeGraph(
             [
                 Edge(
                     source_id=edge.source_id,
                     target_id=target[0],
                     relation=edge.relation,
+                    display_relation=edge.display_relation,
                     source_type=edge.source_type,
                     target_type=target[1],
                     source_name=edge.source_name,
                     target_name=target[2],
-                    provenance=f"shuffled:{edge.provenance}",
+                    confidence=edge.confidence,
+                    edge_source=f"shuffled:{edge.edge_source}",
                 )
                 for edge, target in zip(self.edges, targets, strict=True)
             ]
         )
+        graph.metadata = {**self.metadata, "graph_control": "shuffled", "shuffle_seed": seed}
+        return graph
 
     def has_node(self, node_id: str) -> bool:
         return node_id in self.node_types

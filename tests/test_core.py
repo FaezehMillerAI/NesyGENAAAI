@@ -7,6 +7,7 @@ import numpy as np
 from adaptive_nesy_gen.cli import run_demo
 from adaptive_nesy_gen.gate import eligible_replacement
 from adaptive_nesy_gen.knowledge import KnowledgeGraph
+from adaptive_nesy_gen.primekg_io import find_primekg_layout
 from adaptive_nesy_gen.retrieval import (
     PixelHistogramEncoder,
     VisualIndex,
@@ -15,6 +16,7 @@ from adaptive_nesy_gen.retrieval import (
 from adaptive_nesy_gen.schema import Claim
 from adaptive_nesy_gen.text import DeterministicLinker, LexiconEntry
 from adaptive_nesy_gen.verification import entity_specific_grounding
+from scripts.build_radiology_primekg import build_cache
 
 ROOT = Path(__file__).parents[1]
 DEMO = ROOT / "data" / "demo"
@@ -121,3 +123,56 @@ def test_primekg_raw_column_aliases_are_supported(tmp_path):
     graph = KnowledgeGraph.from_csv(path)
     assert graph.has_node("D:1")
     assert graph.edges[0].relation == "located_in"
+    assert graph.edges[0].display_relation == "located_in"
+    assert graph.edges[0].confidence == 1.0
+
+
+def test_indexed_primekg_layout_and_training_only_cache_builder(tmp_path):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "nodes.csv").write_text(
+        "node_index,node_id,node_type,node_name,node_source\n"
+        "1,D:1,phenotype,Opacity,radlex\n"
+        "2,A:1,anatomy,Lung,uberon\n"
+        "3,RX:1,drug,Aspirin,drugbank\n",
+        encoding="utf-8",
+    )
+    (raw / "edges.csv").write_text(
+        "x_index,y_index,display_relation,confidence,source\n"
+        "1,2,located in,0.9,primekg-test\n",
+        encoding="utf-8",
+    )
+    image = DEMO / "images" / "query.pgm"
+    manifest = tmp_path / "manifest.jsonl"
+    manifest.write_text(
+        "{\"study_id\":\"s1\",\"image_path\":\""
+        + str(image)
+        + "\",\"indication\":\"\",\"report\":\"Opacity.\",\"split\":\"train\",\"metadata\":{}}\n"
+        "{\"study_id\":\"s2\",\"image_path\":\""
+        + str(image)
+        + "\",\"indication\":\"\",\"report\":\"Aspirin.\",\"split\":\"test\",\"metadata\":{}}\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "cache"
+    summary = build_cache(raw, manifest, output, hops=1, seed_split="train")
+    assert summary["manifest_examples_scanned"] == 1
+    assert summary["seed_nodes"] == 1
+    assert summary["subgraph_nodes"] == 2
+    assert (output / "radiology_primekg_summary.json").exists()
+    cached = KnowledgeGraph.from_cache(output)
+    assert cached.metadata["seed_split"] == "train"
+    assert cached.node_names["D:1"] == "Opacity"
+    assert cached.edges[0].relation == "located in"
+    assert cached.edges[0].display_relation == "located in"
+    assert cached.edges[0].confidence == 0.9
+    assert cached.edges[0].edge_source == "primekg-test"
+    assert "RX:1" not in cached.node_names
+
+
+def test_raw_primekg_complete_file_priority(tmp_path):
+    header = "x_id,x_name,x_type,y_id,y_name,y_type,relation\n"
+    row = "D:1,Opacity,phenotype,A:1,Lung,anatomy,located_in\n"
+    (tmp_path / "kg_grouped.csv").write_text(header + row, encoding="utf-8")
+    (tmp_path / "kg_raw.csv").write_text(header + row, encoding="utf-8")
+    layout = find_primekg_layout(tmp_path)
+    assert layout.edge_path.name == "kg_raw.csv"

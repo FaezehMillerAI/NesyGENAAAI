@@ -97,7 +97,7 @@ class ClaimTrace:
     clause_scores: dict[str, float] | None
     primekg_node_status: dict[str, bool]
     graph_paths: list[list[str]]
-    graph_provenance: list[dict[str, str]]
+    graph_provenance: list[dict[str, Any]]
     gate_decision: str
     gate_reason: str
     replacement_provenance: dict[str, Any] | None
@@ -112,6 +112,7 @@ class ReportResult:
     retrieved_studies: list[dict[str, Any]]
     timings_ms: dict[str, float]
     graph_calls: int
+    graph_metadata: dict[str, Any] = field(default_factory=dict)
 
     @property
     def claims(self) -> int:

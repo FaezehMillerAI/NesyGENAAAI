@@ -61,8 +61,11 @@ class LTNVerifier:
         applicable = [edge for edge in subgraph.edges if edge.relation in relations]
         if not applicable:
             return 0.5
-        # Smooth existential (probabilistic sum) over deterministic edge truths.
-        return 1.0 - (0.2 ** len(applicable))
+        # Fuzzy existential (probabilistic sum) over preserved edge confidences.
+        complement = 1.0
+        for edge in applicable:
+            complement *= 1.0 - max(0.0, min(1.0, edge.confidence))
+        return 1.0 - complement
 
     def verify(self, claim: Claim, subgraph: ClaimSubgraph) -> ClauseScores:
         node_coverage = sum(self.graph.has_node(entity.entity_id) for entity in claim.entities)
