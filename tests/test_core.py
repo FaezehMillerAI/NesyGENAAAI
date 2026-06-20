@@ -12,6 +12,7 @@ from adaptive_nesy_gen.retrieval import (
     PixelHistogramEncoder,
     VisualIndex,
     load_manifest,
+    manifest_example_id,
 )
 from adaptive_nesy_gen.schema import Claim
 from adaptive_nesy_gen.text import DeterministicLinker, LexiconEntry
@@ -31,6 +32,19 @@ def test_manifest_and_index_are_train_only_and_study_unique():
     results = index.query(query.image_path, 3, exclude_study_id=query.study_id)
     assert len({item.study.study_id for item in results}) == len(results)
     assert index.query(query.image_path, 0) == []
+
+
+def test_manifest_can_redact_test_references_at_ingestion():
+    studies = load_manifest(DEMO / "manifest.csv", redact_splits={"test"})
+    assert all(study.report for study in studies if study.split == "train")
+    assert all(not study.report for study in studies if study.split == "test")
+
+
+def test_manifest_example_id_keeps_alternate_views_distinct():
+    study = load_manifest(DEMO / "manifest.csv")[0]
+    alternate = type(study)(**{**study.__dict__, "image_path": study.image_path + ".other"})
+    assert manifest_example_id(study) != manifest_example_id(alternate)
+    assert manifest_example_id(study).startswith(f"{study.study_id}::")
 
 
 def test_index_round_trip(tmp_path):

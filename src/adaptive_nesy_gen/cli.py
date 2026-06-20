@@ -10,7 +10,7 @@ from .backends import StaticBackend
 from .evaluation import aggregate_results, bleu_n, entity_f1, leakage_audit, rouge_l_f1
 from .knowledge import KnowledgeGraph
 from .pipeline import AdaptiveNesyGen
-from .retrieval import PixelHistogramEncoder, VisualIndex, load_manifest
+from .retrieval import PixelHistogramEncoder, VisualIndex, load_manifest, manifest_example_id
 from .schema import PipelineConfig
 from .text import DeterministicLinker
 
@@ -48,12 +48,16 @@ def _evaluate(path: str, manifest: str, lexicon: str) -> dict:
             if line.strip():
                 records.append(json.loads(line))
     studies = load_manifest(manifest)
+    test_references = {
+        manifest_example_id(study): study.report for study in studies if study.split == "test"
+    }
     linker = DeterministicLinker.from_json(lexicon)
     lexical = []
     for record in records:
-        if "reference" not in record:
+        reference = record.get("reference") or test_references.get(record.get("example_id", ""))
+        if reference is None:
             continue
-        prediction, reference = record["final_report"], record["reference"]
+        prediction = record["final_report"]
         metrics = {f"bleu_{n}": bleu_n(prediction, reference, n) for n in range(1, 5)}
         metrics["rouge_l"] = rouge_l_f1(prediction, reference)
         metrics.update(entity_f1(prediction, reference, linker))

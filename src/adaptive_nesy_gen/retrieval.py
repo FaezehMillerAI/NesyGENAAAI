@@ -82,16 +82,20 @@ def _l2_normalize(matrix: np.ndarray) -> np.ndarray:
     return matrix / denominator
 
 
-def load_manifest(path: str | Path) -> list[Study]:
+def load_manifest(
+    path: str | Path,
+    redact_splits: set[str] | frozenset[str] = frozenset(),
+) -> list[Study]:
+    """Load studies, optionally blanking reports at the ingestion boundary.
+
+    Generation runners use ``redact_splits={"test"}`` so test references cannot
+    enter retrieval, prompting, verification, revision, or backend objects.
+    """
     path = Path(path)
+    redacted = set(redact_splits)
     studies: list[Study] = []
-    if path.suffix == ".jsonl":
-        with path.open(encoding="utf-8") as handle:
-            rows = [json.loads(line) for line in handle if line.strip()]
-    else:
-        with path.open(newline="", encoding="utf-8") as handle:
-            rows = list(csv.DictReader(handle))
-    for row in rows:
+    for row in _manifest_rows(path):
+        split = row.get("split", "train")
         image_path = Path(row["image_path"])
         if not image_path.is_absolute():
             image_path = (path.parent / image_path).resolve()
@@ -106,14 +110,32 @@ def load_manifest(path: str | Path) -> list[Study]:
                 study_id=str(row["study_id"]),
                 patient_id=str(row.get("patient_id") or metadata.get("subject_id", "")),
                 image_path=str(image_path),
-                report=row["report"],
+                report="" if split in redacted else row["report"],
                 indication=row.get("indication", ""),
-                split=row.get("split", "train"),
+                split=split,
                 view=row.get("view", ""),
                 metadata=metadata,
             )
         )
     return studies
+
+
+def _manifest_rows(path: Path):
+    """Stream rows so redacted references are never retained in a raw row list."""
+    if path.suffix == ".jsonl":
+        with path.open(encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    yield json.loads(line)
+    else:
+        with path.open(newline="", encoding="utf-8") as handle:
+            yield from csv.DictReader(handle)
+
+
+def manifest_example_id(study: Study) -> str:
+    """Stable row key that preserves multiple images belonging to one study."""
+    image_digest = hashlib.sha256(study.image_path.encode("utf-8")).hexdigest()[:12]
+    return f"{study.study_id}::{image_digest}"
 
 
 class VisualIndex:

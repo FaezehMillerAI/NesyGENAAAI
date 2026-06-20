@@ -13,6 +13,7 @@ import random
 from pathlib import Path
 
 import numpy as np
+from tqdm.auto import tqdm
 
 from adaptive_nesy_gen.backends import chexagent_prompt
 from adaptive_nesy_gen.retrieval import load_manifest
@@ -58,7 +59,14 @@ def neighbour_indices(
     index.add(embeddings)
     _, candidates = index.search(embeddings, min(32, len(studies)))
     neighbours = np.full((len(studies), max_neighbours), -1, dtype=np.int64)
-    for row_index, row in enumerate(candidates):
+    for row_index, row in enumerate(
+        tqdm(
+            candidates,
+            desc="Filtering unique training neighbours",
+            unit="study",
+            dynamic_ncols=True,
+        )
+    ):
         seen = {studies[row_index].study_id}
         keep = []
         for candidate in row:
@@ -221,13 +229,15 @@ def main() -> None:
 
     if transformers.__version__ != "4.40.0":
         raise RuntimeError("CheXagent remote code requires transformers==4.40.0")
-    studies = load_manifest(args.manifest)
+    studies = load_manifest(args.manifest, redact_splits={"test"})
     if any(study.split not in {"train", "val", "test"} for study in studies):
         raise ValueError("Manifest contains an unknown split")
     train = [study for study in studies if study.split == "train"]
     validation = [study for study in studies if study.split == "val"]
     if not train or not validation:
         raise ValueError("Both train and val rows are required; test rows are never accepted")
+    if any(study.report for study in studies if study.split == "test"):
+        raise AssertionError("Test-reference firewall failed")
     if any(study.split == "test" for study in train + validation):
         raise AssertionError("test leakage into QLoRA")
 

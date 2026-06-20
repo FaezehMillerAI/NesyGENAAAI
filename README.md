@@ -177,22 +177,27 @@ it across verifier ablations to avoid repeated GPU generation and paired-compari
 
 ## Evaluation
 
-The lightweight evaluator provides BLEU-1–4, ROUGE-L, entity/polarity precision-recall-F1,
-explanation coverage, routing/gate distributions, revision rate, latency, exact-match
-leakage, high-overlap leakage, and prediction diversity. These are smoke/reproducibility
-metrics, not substitutes for the official clinical evaluators.
+The Colab publication stage runs Microsoft COCO BLEU-1–4, ROUGE-L, METEOR and CIDEr,
+plus the official F1CheXbert and F1RadGraph packages. It also reports retrieval,
+generation, claim-verification and end-to-end timing distributions; cached-index
+initialization/load timing and offline-build metadata; graph calls/report; escalation over
+all and linked claims; peak GPU memory;
+index size; exact/high-overlap leakage; same-study and train-only retrieval integrity;
+prediction frequency/diversity; and a separate structural linker audit.
 
-Publication runs should additionally use the official implementations/checkpoints for:
+Generation loads the manifest with every test report redacted, and inference JSONL files
+contain no `reference` field. A stable per-image `example_id` preserves alternate views
+that share a `study_id`. The separate post-inference evaluator then loads and aligns
+references, rejects incomplete or duplicate official-test outputs, computes 2,000-sample
+paired bootstrap intervals with Holm correction, and writes:
 
-- METEOR and CIDEr;
-- CheXbert/CheXpert label metrics;
-- RadGraph F1;
-- entity-linking mention precision, linking accuracy, negation accuracy, and coverage;
-- paired bootstrap confidence intervals and appropriate multiple-comparison correction;
-- expert review before making a hallucination-reduction claim.
+- `publication_metrics.json` and `per_study_metrics.jsonl`;
+- a blinded `expert_review_packet.csv`, protocol, and separate blinding key;
+- `linker_expert_review_packet.csv` for mention/link/negation adjudication.
 
-Always audit same-study exclusion and confirm that no test reference is accessible during
-retrieval, generation, selection, verification, or revision.
+Human expert review cannot be executed by software. The evaluator marks the run
+`PENDING_HUMAN_REVIEW` and blocks a hallucination-reduction claim until the blinded
+reports and linker annotations have been completed and adjudicated.
 
 ## Complexity
 

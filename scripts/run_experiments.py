@@ -9,6 +9,8 @@ import time
 from contextlib import ExitStack
 from pathlib import Path
 
+from tqdm.auto import tqdm
+
 from adaptive_nesy_gen.backends import (
     CheXagentBackend,
     MedGemmaBackend,
@@ -18,7 +20,12 @@ from adaptive_nesy_gen.backends import (
 from adaptive_nesy_gen.experiments import ablation_configs
 from adaptive_nesy_gen.knowledge import KnowledgeGraph
 from adaptive_nesy_gen.pipeline import AdaptiveNesyGen
-from adaptive_nesy_gen.retrieval import MedSigLIPEncoder, VisualIndex, load_manifest
+from adaptive_nesy_gen.retrieval import (
+    MedSigLIPEncoder,
+    VisualIndex,
+    load_manifest,
+    manifest_example_id,
+)
 from adaptive_nesy_gen.schema import PipelineConfig
 from adaptive_nesy_gen.text import DeterministicLinker
 
@@ -30,7 +37,10 @@ def load_drafts(path: Path | None) -> dict[str, str]:
     with path.open(encoding="utf-8") as handle:
         for line in handle:
             row = json.loads(line)
-            drafts[str(row["study_id"])] = row.get("raw_report") or row["final_report"]
+            key = str(row.get("example_id") or row["study_id"])
+            if key in drafts:
+                raise ValueError(f"Duplicate replay key {key} in {path}")
+            drafts[key] = row.get("raw_report") or row["final_report"]
     return drafts
 
 
@@ -51,14 +61,16 @@ def make_record(result, study, args, index_load_ms, ablation, graph_control):
     record = result.to_dict()
     record.update(
         {
-            # The reference is appended only after pipeline.run returns.
             "study_id": study.study_id,
-            "reference": study.report,
+            "example_id": manifest_example_id(study),
             "backend": args.backend,
             "drafting_mode": args.drafting_mode,
             "ablation": ablation,
             "test_reference_consumed_during_inference": False,
+            "reference_access_policy": "test reports redacted at manifest ingestion",
             "resources": {
+                "index_build_ms": None,
+                "indexing_ms": index_load_ms,
                 "index_load_ms": index_load_ms,
                 "index_size_bytes": args.medsiglip_cache.stat().st_size,
                 "peak_gpu_memory_gb": _peak_gpu_memory_gb(),
@@ -102,11 +114,13 @@ def main() -> None:
         parser.error("--drafts-jsonl is required for replay")
     if args.suite and args.backend != "replay":
         parser.error("--suite requires --backend replay")
-    studies = load_manifest(args.manifest)
+    studies = load_manifest(args.manifest, redact_splits={"test"})
     train = [study for study in studies if study.split == "train"]
     test = [study for study in studies if study.split == "test"]
     if not train or not test:
         raise ValueError("Manifest must contain train and test rows")
+    if any(study.report for study in test):
+        raise AssertionError("Test-reference firewall failed")
     encoder = MedSigLIPEncoder()
     index_started = time.perf_counter()
     index = VisualIndex.load(args.medsiglip_cache, encoder, studies=studies)
@@ -142,12 +156,19 @@ def main() -> None:
         )
         return
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    selected_test = test[: args.limit]
     with args.output.open("w", encoding="utf-8") as handle:
-        for offset, study in enumerate(test[: args.limit]):
+        for study in tqdm(
+            selected_test,
+            desc="Generating and verifying reports",
+            unit="study",
+            dynamic_ncols=True,
+        ):
+            replay_key = manifest_example_id(study)
             if args.backend == "replay":
-                if study.study_id not in drafts:
-                    raise KeyError(f"No replay draft for test study {study.study_id}")
-                backend = StaticBackend(drafts[study.study_id])
+                if replay_key not in drafts:
+                    raise KeyError(f"No replay draft for test example {replay_key}")
+                backend = StaticBackend(drafts[replay_key])
             else:
                 backend = shared_backend
             pipeline = AdaptiveNesyGen(index, linker, graph, backend, config)
@@ -167,11 +188,12 @@ def main() -> None:
             )
             handle.write(json.dumps(record) + "\n")
             handle.flush()
-            print(f"[{offset + 1}/{min(len(test), args.limit or len(test))}] {study.study_id}")
 
 
 def _run_suite(args, test, index, linker, graph, configs, drafts, index_load_ms):
     args.output.mkdir(parents=True, exist_ok=True)
+    for stale_output in args.output.glob("*.jsonl"):
+        stale_output.unlink()
     entries = [(name, config, graph, "none") for name, config in configs.items()]
     entries.extend(
         [
@@ -189,20 +211,34 @@ def _run_suite(args, test, index, linker, graph, configs, drafts, index_load_ms)
             ),
         ]
     )
+    selected_test = test[: args.limit]
     with ExitStack() as stack:
         handles = {
             name: stack.enter_context((args.output / f"{name}.jsonl").open("w", encoding="utf-8"))
             for name, _, _, _ in entries
         }
-        for offset, study in enumerate(test[: args.limit]):
-            if study.study_id not in drafts:
-                raise KeyError(f"No replay draft for test study {study.study_id}")
+        study_progress = tqdm(
+            selected_test,
+            desc="Replaying studies",
+            unit="study",
+            dynamic_ncols=True,
+        )
+        ablation_progress = tqdm(
+            total=len(selected_test) * len(entries),
+            desc="Verifier ablations",
+            unit="run",
+            dynamic_ncols=True,
+        )
+        for study in study_progress:
+            replay_key = manifest_example_id(study)
+            if replay_key not in drafts:
+                raise KeyError(f"No replay draft for test example {replay_key}")
             for name, config, controlled_graph, control in entries:
                 pipeline = AdaptiveNesyGen(
                     index,
                     linker,
                     controlled_graph,
-                    StaticBackend(drafts[study.study_id]),
+                    StaticBackend(drafts[replay_key]),
                     config,
                 )
                 result = pipeline.run(
@@ -216,7 +252,8 @@ def _run_suite(args, test, index, linker, graph, configs, drafts, index_load_ms)
                 )
                 handles[name].write(json.dumps(record) + "\n")
                 handles[name].flush()
-            print(f"[{offset + 1}/{min(len(test), args.limit or len(test))}] {study.study_id}")
+                ablation_progress.update()
+        ablation_progress.close()
 
 
 def _peak_gpu_memory_gb() -> float:

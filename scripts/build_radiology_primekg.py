@@ -10,6 +10,8 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+from tqdm.auto import tqdm
+
 from adaptive_nesy_gen.primekg_io import (
     find_primekg_layout,
     iter_primekg_edges,
@@ -63,7 +65,12 @@ def _node_table(primekg_dir: Path) -> dict[str, dict]:
     if layout.nodes_path:
         return load_primekg_nodes(layout.nodes_path)[1]
     nodes: dict[str, dict] = {}
-    for edge in iter_primekg_edges(primekg_dir):
+    for edge in tqdm(
+        iter_primekg_edges(primekg_dir),
+        desc="Reading PrimeKG nodes",
+        unit="edge",
+        dynamic_ncols=True,
+    ):
         nodes[edge.source_id] = {
             "node_id": edge.source_id,
             "node_name": edge.source_name,
@@ -91,7 +98,12 @@ def build_cache(
     layout = find_primekg_layout(primekg_dir)
     nodes = _node_table(primekg_dir)
     matcher = NodeNameMatcher(nodes)
-    studies = [study for study in load_manifest(manifest) if study.split == seed_split]
+    redacted_splits = {"train", "val", "test"} - {seed_split}
+    studies = [
+        study
+        for study in load_manifest(manifest, redact_splits=redacted_splits)
+        if study.split == seed_split
+    ]
     if not studies:
         raise ValueError(f"Manifest has no {seed_split!r} examples")
     seeds: set[str] = set()
@@ -102,9 +114,14 @@ def build_cache(
 
     selected = set(seeds)
     frontier = set(seeds)
-    for _ in range(hops):
+    for hop in range(hops):
         expanded: set[str] = set()
-        for edge in iter_primekg_edges(primekg_dir):
+        for edge in tqdm(
+            iter_primekg_edges(primekg_dir),
+            desc=f"Expanding PrimeKG hop {hop + 1}/{hops}",
+            unit="edge",
+            dynamic_ncols=True,
+        ):
             if edge.source_id in frontier or edge.target_id in frontier:
                 expanded.update((edge.source_id, edge.target_id))
         frontier = expanded - selected
@@ -131,7 +148,12 @@ def build_cache(
         ]
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        for edge in iter_primekg_edges(primekg_dir):
+        for edge in tqdm(
+            iter_primekg_edges(primekg_dir),
+            desc="Writing radiology edges",
+            unit="edge",
+            dynamic_ncols=True,
+        ):
             if edge.source_id not in selected or edge.target_id not in selected:
                 continue
             writer.writerow(
