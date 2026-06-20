@@ -116,9 +116,14 @@ subjects into val/test with seed 13.
 ## Efficient CheXagent QLoRA
 
 CheXagent's released remote code requires `transformers==4.40.0`; use its dedicated
-extra. The script quantizes the decoder with NF4, limits LoRA to decoder modules, keeps
+extra, which pins the matching `peft==0.10.0` rather than resolving a newer incompatible
+PEFT release. The script quantizes the decoder with NF4, limits LoRA to decoder modules, keeps
 the complete visual encoder frozen in BF16, enables gradient checkpointing, uses batch
 size one with accumulation, and saves adapter-only checkpoints.
+
+BF16 is checked before the model download. A T4 is not sufficient for this stated
+precision policy; select an A100, L4, or another BF16-capable GPU. Cell 5 records a full
+traceback in `training_error.log` beside the adapter if its subprocess fails.
 
 ```bash
 python -m pip install -e '.[chexagent]'

@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
+import traceback
 from pathlib import Path
 
 import numpy as np
@@ -165,8 +167,7 @@ class ConditionalImageTransform:
         return transform(image)
 
 
-def configure_visual(model):
-    import torch
+def configure_visual(model, dtype):
     from torchvision import transforms
     from torchvision.transforms import InterpolationMode
 
@@ -176,7 +177,7 @@ def configure_visual(model):
     for parameter in visual.parameters():
         parameter.requires_grad_(False)
         if parameter.is_floating_point():
-            parameter.data = parameter.data.to(torch.bfloat16)
+            parameter.data = parameter.data.to(dtype)
     mean, std = visual.mean, visual.std
     deterministic = transforms.Compose(
         [
@@ -216,6 +217,7 @@ def main() -> None:
     parser.add_argument("--rag-probability", type=float, default=0.5)
     args = parser.parse_args()
 
+    import peft
     import torch
     import transformers
     from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
@@ -229,6 +231,29 @@ def main() -> None:
 
     if transformers.__version__ != "4.40.0":
         raise RuntimeError("CheXagent remote code requires transformers==4.40.0")
+    if peft.__version__ != "0.10.0":
+        raise RuntimeError("CheXagent QLoRA requires peft==0.10.0 with transformers==4.40.0")
+    if not torch.cuda.is_available():
+        raise RuntimeError("CheXagent QLoRA requires a CUDA GPU runtime")
+    if not torch.cuda.is_bf16_supported():
+        raise RuntimeError(
+            f"{torch.cuda.get_device_name(0)} does not support the required BF16 training. "
+            "Select an A100, L4, or another BF16-capable Colab GPU and rerun Cell 5."
+        )
+    compute_dtype = torch.bfloat16
+    print(
+        json.dumps(
+            {
+                "python": __import__("sys").version.split()[0],
+                "torch": torch.__version__,
+                "transformers": transformers.__version__,
+                "peft": peft.__version__,
+                "gpu": torch.cuda.get_device_name(0),
+                "compute_dtype": str(compute_dtype),
+            }
+        ),
+        flush=True,
+    )
     studies = load_manifest(args.manifest, redact_splits={"test"})
     if any(study.split not in {"train", "val", "test"} for study in studies):
         raise ValueError("Manifest contains an unknown split")
@@ -246,7 +271,7 @@ def main() -> None:
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_compute_dtype=compute_dtype,
         llm_int8_skip_modules=["model.visual"],
     )
     model = AutoModelForCausalLM.from_pretrained(
@@ -254,13 +279,13 @@ def main() -> None:
         trust_remote_code=True,
         device_map="auto",
         quantization_config=quantization,
-        torch_dtype=torch.bfloat16,
+        torch_dtype=compute_dtype,
     )
     try:
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
     except (AttributeError, TypeError):
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=False)
-    visual = configure_visual(model)
+    visual = configure_visual(model, compute_dtype)
     model = get_peft_model(
         model,
         LoraConfig(
@@ -327,6 +352,8 @@ def main() -> None:
         "val_examples": len(validation),
         "test_examples_consumed": 0,
         "max_steps": args.max_steps,
+        "compute_dtype": str(compute_dtype),
+        "gpu": torch.cuda.get_device_name(0),
         "peak_gpu_memory_gb": torch.cuda.max_memory_allocated() / 2**30,
     }
     (args.output_dir / "training_summary.json").write_text(
@@ -335,4 +362,12 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException:
+        error_log = os.environ.get("ADAPTIVE_NESY_TRAIN_ERROR_LOG")
+        if error_log:
+            path = Path(error_log)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(traceback.format_exc(), encoding="utf-8")
+        raise

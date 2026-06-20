@@ -39,7 +39,7 @@ chexagent = [
   "einops>=0.8,<1",
   "faiss-cpu>=1.8,<2",
   "opencv-python-headless>=4.9,<5",
-  "peft>=0.13,<1",
+  "peft==0.10.0",
   "pyarrow>=15,<20",
   "torch>=2.2,<3",
   "torchvision>=0.17,<1",
