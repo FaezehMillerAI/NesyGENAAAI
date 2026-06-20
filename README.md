@@ -121,6 +121,12 @@ PEFT release. The script quantizes the decoder with NF4, limits LoRA to decoder 
 the complete visual encoder frozen in BF16, enables gradient checkpointing, uses batch
 size one with accumulation, and saves adapter-only checkpoints.
 
+CheXagent expands one image into a fixed 1,026-token span, so training uses its full
+2,048-token context rather than truncating at 768. Retrieval neighbours are removed from
+the lowest rank only when needed to preserve the complete image span and at least 64
+supervised report tokens. Preprocessing asserts balanced image markers and a non-empty
+`gpt` target before the first forward pass.
+
 BF16 is checked before the model download. A T4 is not sufficient for this stated
 precision policy; select an A100, L4, or another BF16-capable GPU. Cell 5 records a full
 traceback in `training_error.log` beside the adapter if its subprocess fails.

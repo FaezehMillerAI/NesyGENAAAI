@@ -93,6 +93,7 @@ class ReportDataset:
         neighbours: np.ndarray | None = None,
         rag_probability: float = 0.5,
         seed: int = 13,
+        min_target_tokens: int = 64,
     ):
         self.studies = studies
         self.tokenizer = tokenizer
@@ -100,6 +101,7 @@ class ReportDataset:
         self.neighbours = neighbours
         self.rag_probability = rag_probability
         self.seed = seed
+        self.min_target_tokens = min_target_tokens
 
     def __len__(self):
         return len(self.studies)
@@ -116,22 +118,47 @@ class ReportDataset:
                 for item in self.neighbours[index, :3]
                 if item >= 0
             ]
-        query = self.tokenizer.from_list_format(
-            [{"image": study.image_path}, {"text": chexagent_prompt(study.indication, retrieved)}]
-        )
-        prompt = [
-            {"from": "system", "value": "You are a careful radiology report assistant."},
-            {"from": "human", "value": query},
-        ]
-        full = [*prompt, {"from": "assistant", "value": study.report}]
-        prompt_ids = self.tokenizer.apply_chat_template(
-            prompt, add_generation_prompt=True, return_tensors="pt"
-        )[0]
+        prompt = None
+        prompt_ids = None
+        # CheXagent expands each image to 1,026 tokens. If retrieval text makes the
+        # prompt too long, drop the lowest-ranked neighbour(s), never image tokens.
+        for keep in range(len(retrieved), -1, -1):
+            query = self.tokenizer.from_list_format(
+                [
+                    {"image": study.image_path},
+                    {"text": chexagent_prompt(study.indication, retrieved[:keep])},
+                ]
+            )
+            prompt = [
+                {"from": "system", "value": "You are a careful radiology report assistant."},
+                {"from": "human", "value": query},
+            ]
+            prompt_ids = self.tokenizer.apply_chat_template(
+                prompt, add_generation_prompt=True, return_tensors="pt"
+            )[0]
+            if len(prompt_ids) <= self.max_length - self.min_target_tokens:
+                break
+        else:
+            raise ValueError(
+                f"Prompt for {study.study_id} exceeds the {self.max_length}-token budget "
+                "even without retrieval evidence"
+            )
+        # CheXagent's remote chat template names the supervised assistant role `gpt`.
+        full = [*prompt, {"from": "gpt", "value": study.report}]
         input_ids = self.tokenizer.apply_chat_template(
             full, add_generation_prompt=False, return_tensors="pt"
         )[0][: self.max_length]
+        image_starts = int((input_ids == self.tokenizer.img_start_id).sum().item())
+        image_ends = int((input_ids == self.tokenizer.img_end_id).sum().item())
+        if image_starts != 1 or image_ends != 1:
+            raise ValueError(
+                f"Unbalanced CheXagent image span for {study.study_id}: "
+                f"starts={image_starts}, ends={image_ends}, length={len(input_ids)}"
+            )
         labels = input_ids.clone()
         labels[: min(len(prompt_ids), len(labels))] = -100
+        if not bool((labels != -100).any().item()):
+            raise ValueError(f"No supervised report tokens remain for {study.study_id}")
         return {"input_ids": input_ids, "labels": labels}
 
 
@@ -209,7 +236,7 @@ def main() -> None:
     parser.add_argument("--medsiglip-cache", type=Path)
     parser.add_argument("--model-id", default="StanfordAIMI/CheXagent-2-3b")
     parser.add_argument("--max-steps", type=int, default=500)
-    parser.add_argument("--max-length", type=int, default=768)
+    parser.add_argument("--max-length", type=int, default=2048)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--gradient-accumulation", type=int, default=16)
