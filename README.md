@@ -75,6 +75,10 @@ model is gated: first accept the Health AI terms at
 `https://huggingface.co/google/medsiglip-448` and authenticate with a read token. The same
 operation can then be run directly:
 
+The browser approval and the Colab credential are separate. If Hugging Face returns
+401/403, the notebook removes any stale cached or `HF_TOKEN` environment credential and
+asks for a fresh read token from the account that accepted the model terms.
+
 ```bash
 python -m pip install -e '.[medsiglip]'
 python scripts/build_medsiglip_index.py \
