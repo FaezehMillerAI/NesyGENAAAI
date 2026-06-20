@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - name: Install core development environment
+        run: uv sync --extra dev --locked
+      - name: Lint and test
+        run: |
+          uv run ruff check src scripts tests
+          uv run pytest -q
+      - name: Validate Colab notebook
+        run: |
+          python -m json.tool notebooks/Adaptive_NeSy_Gen_Experiments_Colab.ipynb >/dev/null
+          python - <<'PY'
+          import json
+          path = "notebooks/Adaptive_NeSy_Gen_Experiments_Colab.ipynb"
+          notebook = json.load(open(path, encoding="utf-8"))
+          for index, cell in enumerate(notebook["cells"]):
+              if cell["cell_type"] == "code":
+                  compile("".join(cell.get("source", [])), f"{path}:cell-{index}", "exec")
+          PY

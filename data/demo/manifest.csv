@@ -1,0 +1,5 @@
+study_id,patient_id,image_path,view,split,report
+s001,p001,images/train_1.pgm,PA,train,No pleural effusion. Mild left basilar atelectasis. No cardiomegaly.
+s002,p002,images/train_2.pgm,AP,train,No pleural effusion. Mild left basilar opacity. No cardiomegaly.
+s003,p003,images/train_3.pgm,PA,train,Small right pleural effusion. Right basilar opacity. Mild cardiomegaly.
+s900,p900,images/query.pgm,PA,test,No pleural effusion. Mild left basilar opacity. No cardiomegaly.

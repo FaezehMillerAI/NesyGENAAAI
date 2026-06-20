@@ -1,0 +1,7 @@
+source_id,target_id,relation,source_type,target_type,source_name,target_name,provenance
+RAD:pleural_effusion,UBERON:0000977,located_in,finding,anatomy,Pleural effusion,Pleura,PrimeKG-demo
+RAD:atelectasis,UBERON:0002048,located_in,finding,anatomy,Atelectasis,Lung,PrimeKG-demo
+RAD:opacity,UBERON:0002048,located_in,finding,anatomy,Opacity,Lung,PrimeKG-demo
+RAD:cardiomegaly,UBERON:0000948,located_in,finding,anatomy,Cardiomegaly,Heart,PrimeKG-demo
+RAD:atelectasis,RAD:opacity,associated_with,finding,finding,Atelectasis,Opacity,PrimeKG-demo
+RAD:pleural_effusion,RAD:opacity,associated_with,finding,finding,Pleural effusion,Opacity,PrimeKG-demo

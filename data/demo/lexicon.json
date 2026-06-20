@@ -1,0 +1,38 @@
+[
+  {
+    "entity_id": "RAD:pleural_effusion",
+    "canonical_name": "pleural effusion",
+    "entity_type": "finding",
+    "synonyms": ["pleural fluid"]
+  },
+  {
+    "entity_id": "RAD:atelectasis",
+    "canonical_name": "atelectasis",
+    "entity_type": "finding",
+    "synonyms": ["subsegmental collapse"]
+  },
+  {
+    "entity_id": "RAD:opacity",
+    "canonical_name": "opacity",
+    "entity_type": "finding",
+    "synonyms": ["airspace opacity", "opacities"]
+  },
+  {
+    "entity_id": "RAD:cardiomegaly",
+    "canonical_name": "cardiomegaly",
+    "entity_type": "finding",
+    "synonyms": ["enlarged cardiac silhouette"]
+  },
+  {
+    "entity_id": "UBERON:0002048",
+    "canonical_name": "lung",
+    "entity_type": "anatomy",
+    "synonyms": ["pulmonary", "basilar"]
+  },
+  {
+    "entity_id": "RAD:support_device",
+    "canonical_name": "support device",
+    "entity_type": "device",
+    "synonyms": ["support devices", "catheter", "tube"]
+  }
+]
