@@ -21,6 +21,11 @@ Repository = "https://github.com/FaezehMillerAI/NesyGENAAAI"
 Notebook = "https://colab.research.google.com/github/FaezehMillerAI/NesyGENAAAI/blob/main/notebooks/Adaptive_NeSy_Gen_Experiments_Colab.ipynb"
 
 [project.optional-dependencies]
+medsiglip = [
+  "huggingface-hub>=0.30,<1",
+  "torch>=2.3,<3",
+  "transformers>=4.53,<5",
+]
 medgemma = [
   "accelerate>=1.2,<2",
   "bitsandbytes>=0.45,<1; platform_system != 'Darwin'",
@@ -80,6 +85,10 @@ select = ["E", "F", "I", "UP", "B"]
 conflicts = [
   [
     { extra = "medgemma" },
+    { extra = "chexagent" },
+  ],
+  [
+    { extra = "medsiglip" },
     { extra = "chexagent" },
   ],
 ]

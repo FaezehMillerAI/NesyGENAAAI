@@ -71,9 +71,12 @@ Cell 3 accepts both sample-major `(N, D)` and legacy transposed `(D, N)` MedSigL
 caches. If neither axis equals the manifest's training count, the cache is partial; the
 notebook rebuilds all training embeddings with batch progress, adaptive CUDA-OOM batch
 reduction, and atomic replacement so a failed rebuild does not destroy the old file. The
-same operation can be run directly:
+model is gated: first accept the Health AI terms at
+`https://huggingface.co/google/medsiglip-448` and authenticate with a read token. The same
+operation can then be run directly:
 
 ```bash
+python -m pip install -e '.[medsiglip]'
 python scripts/build_medsiglip_index.py \
   --manifest /path/to/manifest.jsonl \
   --output /content/drive/MyDrive/medsiglip_cache_iuxray_official/train_index.npz

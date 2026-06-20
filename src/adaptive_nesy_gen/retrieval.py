@@ -53,14 +53,20 @@ class MedSigLIPEncoder:
             ) from exc
         self.torch = torch
         self.batch_size = batch_size
-        self.processor = AutoProcessor.from_pretrained(model_id)
+        try:
+            self.processor = AutoProcessor.from_pretrained(model_id)
+        except (OSError, ValueError) as exc:
+            raise RuntimeError(_medsiglip_access_message(model_id)) from exc
         if torch.cuda.is_available():
             self.dtype = (
                 torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
             )
         else:
             self.dtype = torch.float32
-        self.model = AutoModel.from_pretrained(model_id, torch_dtype=self.dtype)
+        try:
+            self.model = AutoModel.from_pretrained(model_id, torch_dtype=self.dtype)
+        except (OSError, ValueError) as exc:
+            raise RuntimeError(_medsiglip_access_message(model_id)) from exc
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device).eval()
         for parameter in self.model.parameters():
@@ -111,6 +117,14 @@ class MedSigLIPEncoder:
 def _l2_normalize(matrix: np.ndarray) -> np.ndarray:
     denominator = np.linalg.norm(matrix, axis=1, keepdims=True).clip(min=1e-12)
     return matrix / denominator
+
+
+def _medsiglip_access_message(model_id: str) -> str:
+    return (
+        f"Could not load gated model {model_id}. Accept its Health AI terms at "
+        f"https://huggingface.co/{model_id}, authenticate with huggingface_hub.login(), "
+        "then rerun the cache build."
+    )
 
 
 def load_manifest(
