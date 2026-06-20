@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
+import traceback
 from contextlib import ExitStack
 from pathlib import Path
 
@@ -266,4 +268,12 @@ def _peak_gpu_memory_gb() -> float:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException:
+        error_log = os.environ.get("ADAPTIVE_NESY_ERROR_LOG")
+        if error_log:
+            path = Path(error_log)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(traceback.format_exc(), encoding="utf-8")
+        raise

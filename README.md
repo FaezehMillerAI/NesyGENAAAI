@@ -82,6 +82,11 @@ python scripts/build_medsiglip_index.py \
   --output /content/drive/MyDrive/medsiglip_cache_iuxray_official/train_index.npz
 ```
 
+The MedGemma generation backend is gated separately. Before Cell 6, accept the terms at
+`https://huggingface.co/google/medgemma-4b-it` with the same Hugging Face account. Cell 6
+checks access before loading the model and writes a persistent `*.error.log` beside its
+JSONL output if the generation subprocess fails.
+
 Rebuild the manifests only if needed:
 
 ```bash
