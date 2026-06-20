@@ -46,6 +46,11 @@ pytest -q
 The bundled PGM images and `PrimeKG-demo` graph are synthetic pipeline fixtures only.
 They are not clinical data and produce no research result.
 
+If Colab reports that `adaptive_nesy_gen.retrieval` is missing, rerun the repository
+bootstrap cell immediately above the path/configuration cell. It installs with the active
+kernel interpreter, places this repository's `src/` first on `sys.path`, and prints the
+resolved package file so a stale package collision is visible.
+
 ## Your existing IU-Xray and MIMIC-CXR artifacts
 
 The Colab notebook is preconfigured for these paths:
