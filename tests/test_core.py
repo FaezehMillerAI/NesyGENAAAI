@@ -58,6 +58,16 @@ def test_index_round_trip(tmp_path):
     assert [row.study_id for row in loaded.studies] == [row.study_id for row in index.studies]
 
 
+def test_index_load_accepts_transposed_embedding_cache(tmp_path):
+    studies = load_manifest(DEMO / "manifest.csv")
+    encoder = PixelHistogramEncoder()
+    index, _ = VisualIndex.build(studies, encoder)
+    path = tmp_path / "transposed.npz"
+    np.savez_compressed(path, embeddings=index.embeddings.T)
+    loaded = VisualIndex.load(path, encoder, studies=studies)
+    np.testing.assert_allclose(index.embeddings, loaded.embeddings)
+
+
 def test_linker_preserves_negation():
     linker = DeterministicLinker.from_json(DEMO / "lexicon.json")
     claims = linker.claims("No pleural effusion. Mild opacity.")

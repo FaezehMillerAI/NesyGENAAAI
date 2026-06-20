@@ -11,6 +11,7 @@ from typing import Protocol
 
 import numpy as np
 from PIL import Image
+from tqdm.auto import tqdm
 
 from .schema import RetrievedStudy, Study
 
@@ -53,8 +54,13 @@ class MedSigLIPEncoder:
         self.torch = torch
         self.batch_size = batch_size
         self.processor = AutoProcessor.from_pretrained(model_id)
-        dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-        self.model = AutoModel.from_pretrained(model_id, torch_dtype=dtype)
+        if torch.cuda.is_available():
+            self.dtype = (
+                torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+            )
+        else:
+            self.dtype = torch.float32
+        self.model = AutoModel.from_pretrained(model_id, torch_dtype=self.dtype)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device).eval()
         for parameter in self.model.parameters():
@@ -62,18 +68,43 @@ class MedSigLIPEncoder:
 
     def encode(self, image_paths: list[str]) -> np.ndarray:  # pragma: no cover - GPU path
         batches: list[np.ndarray] = []
-        for offset in range(0, len(image_paths), self.batch_size):
-            images = [
-                Image.open(path).convert("RGB")
-                for path in image_paths[offset : offset + self.batch_size]
-            ]
-            inputs = self.processor(images=images, return_tensors="pt").to(self.device)
-            with self.torch.inference_mode():
-                if hasattr(self.model, "get_image_features"):
-                    output = self.model.get_image_features(**inputs)
-                else:
-                    output = self.model.vision_model(**inputs).pooler_output
+        progress = tqdm(
+            total=len(image_paths),
+            desc="Encoding MedSigLIP training images",
+            unit="image",
+            dynamic_ncols=True,
+        )
+        offset = 0
+        batch_size = self.batch_size
+        while offset < len(image_paths):
+            batch_paths = image_paths[offset : offset + batch_size]
+            images = []
+            for path in batch_paths:
+                with Image.open(path) as image:
+                    images.append(image.convert("RGB"))
+            inputs = None
+            try:
+                inputs = self.processor(images=images, return_tensors="pt").to(self.device)
+                inputs["pixel_values"] = inputs["pixel_values"].to(self.dtype)
+                with self.torch.inference_mode():
+                    if hasattr(self.model, "get_image_features"):
+                        output = self.model.get_image_features(**inputs)
+                    else:
+                        output = self.model.vision_model(**inputs).pooler_output
+            except self.torch.cuda.OutOfMemoryError:
+                if batch_size == 1:
+                    progress.close()
+                    raise
+                batch_size = max(1, batch_size // 2)
+                del inputs
+                self.torch.cuda.empty_cache()
+                progress.write(f"CUDA OOM; retrying with batch size {batch_size}")
+                continue
             batches.append(output.float().cpu().numpy())
+            del inputs, output
+            offset += len(batch_paths)
+            progress.update(len(batch_paths))
+        progress.close()
         return _l2_normalize(np.concatenate(batches))
 
 
@@ -156,17 +187,19 @@ class VisualIndex:
         elapsed = (time.perf_counter() - started) * 1000.0
         return cls(train, embeddings, encoder), elapsed
 
-    def save(self, path: str | Path) -> None:
+    def save(self, path: str | Path, indexing_ms: float | None = None) -> None:
         import json
 
         metadata = [study.__dict__ for study in self.studies]
         fingerprint = hashlib.sha256(json.dumps(metadata, sort_keys=True).encode()).hexdigest()
-        np.savez_compressed(
-            path,
-            embeddings=self.embeddings,
-            metadata=np.asarray(json.dumps(metadata)),
-            fingerprint=np.asarray(fingerprint),
-        )
+        payload = {
+            "embeddings": self.embeddings,
+            "metadata": np.asarray(json.dumps(metadata)),
+            "fingerprint": np.asarray(fingerprint),
+        }
+        if indexing_ms is not None:
+            payload["indexing_ms"] = np.asarray(indexing_ms)
+        np.savez_compressed(path, **payload)
 
     @classmethod
     def load(
@@ -189,12 +222,13 @@ class VisualIndex:
             indexed = [study for study in studies if study.split == "train"]
         else:
             raise ValueError("A manifest is required for caches without embedded metadata")
-        if len(indexed) != len(archive[embedding_key]):
+        embeddings = _orient_embedding_matrix(archive[embedding_key], len(indexed))
+        if len(indexed) != len(embeddings):
             raise ValueError(
                 "Manifest train rows do not align with cache embeddings: "
-                f"{len(indexed)} != {len(archive[embedding_key])}"
+                f"{len(indexed)} != {len(embeddings)}"
             )
-        return cls(indexed, archive[embedding_key], encoder)
+        return cls(indexed, embeddings, encoder)
 
     def query(
         self,
@@ -225,3 +259,15 @@ class VisualIndex:
             if len(results) == k:
                 break
         return results
+
+
+def _orient_embedding_matrix(matrix: np.ndarray, expected_rows: int) -> np.ndarray:
+    """Accept sample-major caches and legacy transposed feature matrices."""
+    matrix = np.asarray(matrix)
+    if matrix.ndim != 2:
+        raise ValueError(f"Embedding matrix must be 2-D, got shape {matrix.shape}")
+    if matrix.shape[0] == expected_rows:
+        return matrix
+    if matrix.shape[1] == expected_rows:
+        return matrix.T
+    return matrix

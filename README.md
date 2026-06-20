@@ -67,6 +67,18 @@ directory; your absolute Drive image paths work directly. Only `train` rows are 
 to `VisualIndex`. QLoRA consumes `train` and `val`; the script asserts that zero `test`
 examples are consumed.
 
+Cell 3 accepts both sample-major `(N, D)` and legacy transposed `(D, N)` MedSigLIP
+caches. If neither axis equals the manifest's training count, the cache is partial; the
+notebook rebuilds all training embeddings with batch progress, adaptive CUDA-OOM batch
+reduction, and atomic replacement so a failed rebuild does not destroy the old file. The
+same operation can be run directly:
+
+```bash
+python scripts/build_medsiglip_index.py \
+  --manifest /path/to/manifest.jsonl \
+  --output /content/drive/MyDrive/medsiglip_cache_iuxray_official/train_index.npz
+```
+
 Rebuild the manifests only if needed:
 
 ```bash
