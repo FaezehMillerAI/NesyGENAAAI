@@ -76,8 +76,9 @@ model is gated: first accept the Health AI terms at
 operation can then be run directly:
 
 The browser approval and the Colab credential are separate. If Hugging Face returns
-401/403, the notebook removes any stale cached or `HF_TOKEN` environment credential and
-asks for a fresh read token from the account that accepted the model terms.
+401/403, the notebook uses a blocking hidden prompt for a fresh read token and explicitly
+overrides any stale cached credential. This avoids Colab continuing before Hugging Face's
+non-blocking login widget has received a token.
 
 ```bash
 python -m pip install -e '.[medsiglip]'
