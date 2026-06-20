@@ -17,17 +17,44 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--model-id", default="google/medsiglip-448")
     parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument(
+        "--progress-file",
+        type=Path,
+        help="Optional JSON status file for a parent notebook progress bar",
+    )
     args = parser.parse_args()
 
+    def report_progress(stage: str, completed: int, total: int) -> None:
+        if args.progress_file is None:
+            return
+        args.progress_file.parent.mkdir(parents=True, exist_ok=True)
+        temporary_status = args.progress_file.with_suffix(".tmp")
+        temporary_status.write_text(
+            json.dumps({"stage": stage, "completed": completed, "total": total}),
+            encoding="utf-8",
+        )
+        temporary_status.replace(args.progress_file)
+
+    report_progress("Reading training manifest", 0, 0)
     studies = load_manifest(args.manifest, redact_splits={"val", "test"})
     train_count = sum(study.split == "train" for study in studies)
     if not train_count:
         raise ValueError("Manifest has no training examples")
-    encoder = MedSigLIPEncoder(args.model_id, batch_size=args.batch_size)
+    report_progress("Loading MedSigLIP model", 0, train_count)
+    encoder = MedSigLIPEncoder(
+        args.model_id,
+        batch_size=args.batch_size,
+        progress_callback=lambda completed, total: report_progress(
+            "Encoding training images", completed, total
+        ),
+        show_progress=args.progress_file is None,
+    )
+    report_progress("Encoding training images", 0, train_count)
     started = time.perf_counter()
     index, encoding_ms = VisualIndex.build(studies, encoder)
     total_ms = (time.perf_counter() - started) * 1000.0
 
+    report_progress("Saving cache atomically", train_count, train_count)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.output.with_name(f"{args.output.stem}.rebuild.npz")
     index.save(temporary, indexing_ms=total_ms)
@@ -44,6 +71,7 @@ def main() -> None:
     args.output.with_name(f"{args.output.stem}_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
+    report_progress("Complete", train_count, train_count)
     print(json.dumps(summary, indent=2))
 
 

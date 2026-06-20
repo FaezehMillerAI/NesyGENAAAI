@@ -6,6 +6,7 @@ import csv
 import hashlib
 import json
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Protocol
 
@@ -43,7 +44,13 @@ class PixelHistogramEncoder:
 class MedSigLIPEncoder:
     """Lazy Hugging Face adapter for the frozen google/medsiglip-448 image tower."""
 
-    def __init__(self, model_id: str = "google/medsiglip-448", batch_size: int = 8):
+    def __init__(
+        self,
+        model_id: str = "google/medsiglip-448",
+        batch_size: int = 8,
+        progress_callback: Callable[[int, int], None] | None = None,
+        show_progress: bool = True,
+    ):
         try:
             import torch
             from transformers import AutoModel, AutoProcessor
@@ -53,6 +60,8 @@ class MedSigLIPEncoder:
             ) from exc
         self.torch = torch
         self.batch_size = batch_size
+        self.progress_callback = progress_callback
+        self.show_progress = show_progress
         try:
             self.processor = AutoProcessor.from_pretrained(model_id)
         except (OSError, ValueError) as exc:
@@ -79,6 +88,7 @@ class MedSigLIPEncoder:
             desc="Encoding MedSigLIP training images",
             unit="image",
             dynamic_ncols=True,
+            disable=not self.show_progress,
         )
         offset = 0
         batch_size = self.batch_size
@@ -110,6 +120,8 @@ class MedSigLIPEncoder:
             del inputs, output
             offset += len(batch_paths)
             progress.update(len(batch_paths))
+            if self.progress_callback is not None:
+                self.progress_callback(offset, len(image_paths))
         progress.close()
         return _l2_normalize(np.concatenate(batches))
 
