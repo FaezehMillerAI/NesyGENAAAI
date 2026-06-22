@@ -20,7 +20,68 @@ from PIL import Image
 from adaptive_nesy_gen.backends import lightweight_prompt
 from adaptive_nesy_gen.retrieval import load_manifest
 from adaptive_nesy_gen.schema import RetrievedStudy
-from scripts.train_chexagent_qlora import neighbour_indices
+
+
+def _training_embeddings(path: Path, expected_rows: int) -> np.ndarray:
+    """Load sample-major or legacy-transposed MedSigLIP training embeddings."""
+    archive = np.load(path, allow_pickle=False)
+    key = next(
+        (name for name in ("embeddings", "image_embeddings", "features") if name in archive),
+        None,
+    )
+    if key is None:
+        raise ValueError(f"No embeddings found in {path}; keys={archive.files}")
+    matrix = np.asarray(archive[key], dtype=np.float32)
+    if matrix.ndim != 2:
+        raise ValueError(f"Embedding matrix must be 2-D, got {matrix.shape}")
+    if matrix.shape[0] != expected_rows and matrix.shape[1] == expected_rows:
+        matrix = matrix.T
+    if matrix.shape[0] != expected_rows:
+        raise ValueError(
+            f"MedSigLIP cache/train mismatch: {matrix.shape} for {expected_rows} rows"
+        )
+    matrix /= np.linalg.norm(matrix, axis=1, keepdims=True).clip(min=1e-12)
+    return matrix
+
+
+def neighbour_indices(
+    embeddings_path: Path,
+    studies,
+    cache_path: Path,
+    max_neighbours: int = 5,
+) -> np.ndarray:
+    """Build/reuse a fast unique-study FAISS neighbour table for training RAG."""
+    if cache_path.exists():
+        cached = np.load(cache_path, allow_pickle=False)["neighbours"]
+        if cached.shape == (len(studies), max_neighbours):
+            return cached
+    try:
+        import faiss
+    except ImportError as exc:
+        raise RuntimeError("Install adaptive-nesy-gen[lightweight] for FAISS") from exc
+    embeddings = _training_embeddings(embeddings_path, len(studies))
+    index = faiss.IndexHNSWFlat(embeddings.shape[1], 32, faiss.METRIC_INNER_PRODUCT)
+    index.hnsw.efConstruction = 80
+    index.hnsw.efSearch = 64
+    index.add(embeddings)
+    _, candidates = index.search(embeddings, min(32, len(studies)))
+    neighbours = np.full((len(studies), max_neighbours), -1, dtype=np.int64)
+    for row_index, row in enumerate(candidates):
+        seen = {studies[row_index].study_id}
+        keep = []
+        for candidate in row:
+            if candidate < 0 or studies[candidate].study_id in seen:
+                continue
+            seen.add(studies[candidate].study_id)
+            keep.append(candidate)
+            if len(keep) == max_neighbours:
+                break
+        neighbours[row_index, : len(keep)] = keep
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = cache_path.with_suffix(cache_path.suffix + ".tmp.npz")
+    np.savez_compressed(temporary, neighbours=neighbours)
+    temporary.replace(cache_path)
+    return neighbours
 
 
 class LightweightReportDataset:
