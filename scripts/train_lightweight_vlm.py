@@ -330,6 +330,7 @@ def main() -> None:
         metric_for_best_model="eval_loss",
         greater_is_better=False,
         logging_steps=10,
+        disable_tqdm=False,
         dataloader_num_workers=2,
         dataloader_pin_memory=True,
         remove_unused_columns=False,
