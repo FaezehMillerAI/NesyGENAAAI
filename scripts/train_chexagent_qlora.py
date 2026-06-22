@@ -255,6 +255,7 @@ def main() -> None:
         Trainer,
         TrainingArguments,
     )
+    from transformers.trainer_utils import get_last_checkpoint
 
     if transformers.__version__ != "4.40.0":
         raise RuntimeError("CheXagent remote code requires transformers==4.40.0")
@@ -360,6 +361,9 @@ def main() -> None:
         save_steps=max(25, min(100, args.max_steps // 5)),
         logging_steps=5,
         save_total_limit=2,
+        load_best_model_at_end=True,
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
         remove_unused_columns=False,
         report_to="none",
         seed=13,
@@ -371,7 +375,12 @@ def main() -> None:
         eval_dataset=val_dataset,
         data_collator=CausalCollator(tokenizer.pad_token_id),
     )
-    trainer.train()
+    last_checkpoint = (
+        get_last_checkpoint(str(args.output_dir)) if args.output_dir.exists() else None
+    )
+    if last_checkpoint:
+        print(f"Resuming CheXagent QLoRA from {last_checkpoint}", flush=True)
+    trainer.train(resume_from_checkpoint=last_checkpoint)
     trainer.save_model(args.output_dir / "adapter")
     tokenizer.save_pretrained(args.output_dir / "adapter")
     summary = {
@@ -381,6 +390,8 @@ def main() -> None:
         "max_steps": args.max_steps,
         "compute_dtype": str(compute_dtype),
         "gpu": torch.cuda.get_device_name(0),
+        "best_checkpoint": trainer.state.best_model_checkpoint,
+        "best_validation_loss": trainer.state.best_metric,
         "peak_gpu_memory_gb": torch.cuda.max_memory_allocated() / 2**30,
     }
     (args.output_dir / "training_summary.json").write_text(

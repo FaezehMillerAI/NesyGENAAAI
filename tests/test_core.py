@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
+from adaptive_nesy_gen.backends import clean_findings_output
 from adaptive_nesy_gen.cli import run_demo
 from adaptive_nesy_gen.gate import eligible_replacement
 from adaptive_nesy_gen.knowledge import KnowledgeGraph
@@ -21,6 +22,11 @@ from scripts.build_radiology_primekg import build_cache
 
 ROOT = Path(__file__).parents[1]
 DEMO = ROOT / "data" / "demo"
+
+
+def test_findings_cleanup_removes_wrappers_but_keeps_content():
+    text = "Assistant: FINDINGS:  No focal opacity.\nIMPRESSION: Normal chest."
+    assert clean_findings_output(text) == "No focal opacity."
 
 
 def test_manifest_and_index_are_train_only_and_study_unique():

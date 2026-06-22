@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Protocol
 
@@ -37,6 +38,19 @@ class RetrievalOnlyBackend:
     ) -> str:
         del image_path, indication
         return retrieved[0].study.report if retrieved else ""
+
+
+def clean_findings_output(text: str) -> str:
+    """Remove common chat/section wrappers without changing clinical content."""
+    cleaned = re.sub(r"\s+", " ", text).strip()
+    cleaned = re.sub(
+        r"^(?:assistant\s*[:\-]?\s*)?(?:findings?\s*:\s*)?",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    ).strip()
+    cleaned = re.split(r"\bimpression\s*:\s*", cleaned, maxsplit=1, flags=re.IGNORECASE)[0]
+    return cleaned.strip()
 
 
 def medgemma_prompt(indication: str, retrieved: list[RetrievedStudy]) -> str:
@@ -105,8 +119,8 @@ class MedGemmaBackend:
         output = self.pipe(text=messages, max_new_tokens=self.max_new_tokens, do_sample=False)
         generated = output[0]["generated_text"]
         if isinstance(generated, list):
-            return str(generated[-1]["content"]).strip()
-        return str(generated).strip()
+            return clean_findings_output(str(generated[-1]["content"]))
+        return clean_findings_output(str(generated))
 
 
 def chexagent_prompt(indication: str, retrieved: list[RetrievedStudy]) -> str:
@@ -131,6 +145,8 @@ class CheXagentBackend:
         adapter: str | Path | None = None,
         model_id: str = "StanfordAIMI/CheXagent-2-3b",
         max_new_tokens: int = 160,
+        min_new_tokens: int = 24,
+        num_beams: int = 2,
         load_in_4bit: bool = True,
         use_retrieval: bool = True,
     ):
@@ -164,34 +180,44 @@ class CheXagentBackend:
             self.model = PeftModel.from_pretrained(self.model, adapter)
         self.model.eval()
         self.max_new_tokens = max_new_tokens
+        self.min_new_tokens = min_new_tokens
+        self.num_beams = num_beams
         self.use_retrieval = use_retrieval
 
     def generate(
         self, image_path: str, indication: str, retrieved: list[RetrievedStudy]
     ) -> str:  # pragma: no cover - trained GPU path
-        query = self.tokenizer.from_list_format(
-            [
-                {"image": image_path},
-                {
-                    "text": chexagent_prompt(
-                        indication, retrieved if self.use_retrieval else []
-                    )
-                },
+        evidence = retrieved if self.use_retrieval else []
+        input_ids = None
+        for keep in range(min(3, len(evidence)), -1, -1):
+            query = self.tokenizer.from_list_format(
+                [
+                    {"image": image_path},
+                    {"text": chexagent_prompt(indication, evidence[:keep])},
+                ]
+            )
+            conversation = [
+                {"from": "system", "value": "You are a careful radiology report assistant."},
+                {"from": "human", "value": query},
             ]
-        )
-        conversation = [
-            {"from": "system", "value": "You are a careful radiology report assistant."},
-            {"from": "human", "value": query},
-        ]
-        input_ids = self.tokenizer.apply_chat_template(
-            conversation, add_generation_prompt=True, return_tensors="pt"
-        ).to(next(self.model.parameters()).device)
+            candidate = self.tokenizer.apply_chat_template(
+                conversation, add_generation_prompt=True, return_tensors="pt"
+            )
+            if candidate.shape[-1] <= 2048 - self.max_new_tokens:
+                input_ids = candidate.to(next(self.model.parameters()).device)
+                break
+        if input_ids is None:
+            raise ValueError("CheXagent prompt exceeds its context even without retrieval evidence")
         with self.torch.inference_mode():
             output = self.model.generate(
                 input_ids,
                 do_sample=False,
-                num_beams=1,
+                num_beams=self.num_beams,
+                min_new_tokens=self.min_new_tokens,
                 use_cache=True,
                 max_new_tokens=self.max_new_tokens,
             )[0]
-        return self.tokenizer.decode(output[input_ids.size(1) :], skip_special_tokens=True).strip()
+        decoded = self.tokenizer.decode(
+            output[input_ids.size(1) :], skip_special_tokens=True
+        )
+        return clean_findings_output(decoded)

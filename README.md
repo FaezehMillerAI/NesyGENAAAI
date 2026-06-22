@@ -127,6 +127,14 @@ the lowest rank only when needed to preserve the complete image span and at leas
 supervised report tokens. Preprocessing asserts balanced image markers and a non-empty
 `gpt` target before the first forward pass.
 
+The Colab BLEU-oriented default uses the trained CheXagent adapter, two-beam deterministic
+decoding, a 24-token minimum generation budget, retrieval-conditioned prompting, and
+section-wrapper cleanup. On GPUs with at least 40 GiB, QLoRA automatically uses batch
+size 4 with four-step accumulation (the same effective batch 16) to reduce wall time.
+Checkpoints resume automatically, and the saved adapter is selected by lowest official
+validation loss rather than final-step position. These choices are leakage-safe optimizations, not a
+guarantee of any metric threshold; Cell 8 reports whether official BLEU-1 reaches 0.50.
+
 BF16 is checked before the model download. A T4 is not sufficient for this stated
 precision policy; select an A100, L4, or another BF16-capable GPU. Cell 5 records a full
 traceback in `training_error.log` beside the adapter if its subprocess fails.
