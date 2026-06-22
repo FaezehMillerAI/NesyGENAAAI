@@ -19,6 +19,9 @@ conflicts = [[
 ], [
     { package = "adaptive-nesy-gen", extra = "chexagent" },
     { package = "adaptive-nesy-gen", extra = "medsiglip" },
+], [
+    { package = "adaptive-nesy-gen", extra = "chexagent" },
+    { package = "adaptive-nesy-gen", extra = "lightweight" },
 ]]
 
 [[package]]
@@ -48,8 +51,8 @@ resolution-markers = [
 ]
 dependencies = [
     { name = "huggingface-hub" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging" },
     { name = "psutil" },
     { name = "pyyaml" },
@@ -79,8 +82,8 @@ resolution-markers = [
 ]
 dependencies = [
     { name = "huggingface-hub" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra != 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra != 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging" },
     { name = "psutil" },
     { name = "pyyaml" },
@@ -97,8 +100,8 @@ name = "adaptive-nesy-gen"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "pillow" },
     { name = "tqdm" },
 ]
@@ -127,11 +130,19 @@ eval = [
     { name = "pycocoevalcap" },
     { name = "radgraph" },
     { name = "rouge-score" },
-    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scikit-learn", version = "1.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scikit-learn", version = "1.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "torch" },
     { name = "transformers", version = "4.40.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+]
+lightweight = [
+    { name = "accelerate", version = "1.14.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "faiss-cpu" },
+    { name = "safetensors" },
+    { name = "torch" },
+    { name = "torchvision" },
+    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" } },
 ]
 medgemma = [
     { name = "accelerate", version = "1.14.0", source = { registry = "https://pypi.org/simple" } },
@@ -148,6 +159,7 @@ medsiglip = [
 [package.metadata]
 requires-dist = [
     { name = "accelerate", marker = "extra == 'chexagent'", specifier = ">=0.29,<1" },
+    { name = "accelerate", marker = "extra == 'lightweight'", specifier = ">=1.2,<2" },
     { name = "accelerate", marker = "extra == 'medgemma'", specifier = ">=1.2,<2" },
     { name = "albumentations", marker = "extra == 'chexagent'", specifier = ">=1.4,<2" },
     { name = "bitsandbytes", marker = "sys_platform != 'darwin' and extra == 'chexagent'", specifier = ">=0.43,<1" },
@@ -155,6 +167,7 @@ requires-dist = [
     { name = "einops", marker = "extra == 'chexagent'", specifier = ">=0.8,<1" },
     { name = "f1chexbert", marker = "extra == 'eval'", specifier = "==0.0.2" },
     { name = "faiss-cpu", marker = "extra == 'chexagent'", specifier = ">=1.8,<2" },
+    { name = "faiss-cpu", marker = "extra == 'lightweight'", specifier = ">=1.8,<2" },
     { name = "huggingface-hub", marker = "extra == 'medsiglip'", specifier = ">=0.30,<1" },
     { name = "nltk", marker = "extra == 'eval'", specifier = ">=3.9,<4" },
     { name = "numpy", specifier = ">=1.24,<3" },
@@ -167,27 +180,31 @@ requires-dist = [
     { name = "radgraph", marker = "extra == 'eval'", specifier = "==0.1.18" },
     { name = "rouge-score", marker = "extra == 'eval'", specifier = ">=0.1.2,<1" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9,<1" },
+    { name = "safetensors", marker = "extra == 'lightweight'", specifier = ">=0.4,<1" },
     { name = "scikit-learn", marker = "extra == 'eval'", specifier = ">=1.4,<2" },
     { name = "torch", marker = "extra == 'chexagent'", specifier = ">=2.2,<3" },
     { name = "torch", marker = "extra == 'eval'", specifier = ">=2.1,<3" },
+    { name = "torch", marker = "extra == 'lightweight'", specifier = ">=2.3,<3" },
     { name = "torch", marker = "extra == 'medgemma'", specifier = ">=2.3,<3" },
     { name = "torch", marker = "extra == 'medsiglip'", specifier = ">=2.3,<3" },
     { name = "torchvision", marker = "extra == 'chexagent'", specifier = ">=0.17,<1" },
+    { name = "torchvision", marker = "extra == 'lightweight'", specifier = ">=0.18,<1" },
     { name = "tqdm", specifier = ">=4.66,<5" },
     { name = "transformers", marker = "extra == 'chexagent'", specifier = "==4.40.0" },
     { name = "transformers", marker = "extra == 'eval'", specifier = ">=4.39,<5" },
+    { name = "transformers", marker = "extra == 'lightweight'", specifier = ">=4.50,<5" },
     { name = "transformers", marker = "extra == 'medgemma'", specifier = ">=4.50,<5" },
     { name = "transformers", marker = "extra == 'medsiglip'", specifier = ">=4.53,<5" },
 ]
-provides-extras = ["medsiglip", "medgemma", "chexagent", "eval", "dev"]
+provides-extras = ["medsiglip", "medgemma", "lightweight", "chexagent", "eval", "dev"]
 
 [[package]]
 name = "albucore"
 version = "0.0.23"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "opencv-python-headless" },
     { name = "simsimd" },
     { name = "stringzilla" },
@@ -203,14 +220,14 @@ version = "1.4.24"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "albucore" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "opencv-python-headless" },
     { name = "pydantic" },
     { name = "pyyaml" },
-    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version == '3.11.*' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.12' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version == '3.11.*' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.12' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/04/5a/151344c3ce5a6ee50437b07aa58364ada145d3a7b63e12849068ed0c5265/albumentations-1.4.24.tar.gz", hash = "sha256:cc8874cb0abccc9117aefacbe385c354ac824fa142f46a6c0896d65cec5f8a6d", size = 263557, upload-time = "2024-12-24T21:59:34.587Z" }
 wheels = [
@@ -240,8 +257,8 @@ name = "bitsandbytes"
 version = "0.49.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging" },
     { name = "torch" },
 ]
@@ -371,7 +388,7 @@ name = "click"
 version = "8.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9b/98/518d8e5081007684232226f475082b30087d0f585e8457db087298259f49/click-8.4.1.tar.gz", hash = "sha256:918b5633eddf6b41c32d4f454bf0de810065c74e3f7dbf8ee5452f8be88d3e96", size = 353007, upload-time = "2026-05-22T04:08:37.769Z" }
 wheels = [
@@ -392,7 +409,7 @@ name = "cuda-bindings"
 version = "13.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-pathfinder", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "cuda-pathfinder" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a9/21/8464d133752951c154feafb3b65c297e7d80f301183d220bec4c830f1441/cuda_bindings-13.3.1-cp310-cp310-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:120fcc53d57903df529c3486962c56528cba5b7d6c57c99537320ed9922c8b86", size = 6073403, upload-time = "2026-05-29T23:11:36.22Z" },
@@ -433,34 +450,34 @@ wheels = [
 
 [package.optional-dependencies]
 cudart = [
-    { name = "nvidia-cuda-runtime", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cuda-runtime", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 cufft = [
-    { name = "nvidia-cufft", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cufft", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 cufile = [
-    { name = "nvidia-cufile", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cufile", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 cupti = [
-    { name = "nvidia-cuda-cupti", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cuda-cupti", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 curand = [
-    { name = "nvidia-curand", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-curand", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 cusolver = [
-    { name = "nvidia-cusolver", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cusolver", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 cusparse = [
-    { name = "nvidia-cusparse", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cusparse", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 nvjitlink = [
-    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-nvjitlink", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 nvrtc = [
-    { name = "nvidia-cuda-nvrtc", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cuda-nvrtc", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 nvtx = [
-    { name = "nvidia-nvtx", marker = "(python_full_version < '3.11' and sys_platform == 'win32') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or sys_platform == 'linux' or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-nvtx", marker = "sys_platform == 'linux' or sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 
 [[package]]
@@ -486,7 +503,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -499,15 +516,15 @@ version = "0.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "appdirs" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "pandas", version = "3.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scikit-learn", version = "1.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "pandas", version = "3.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scikit-learn", version = "1.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "torch" },
     { name = "transformers", version = "4.40.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/cc/d1/96acf71503f3eb4fbe48b0b8d76aded97a23598c6ce14f33489103da3116/f1chexbert-0.0.2.tar.gz", hash = "sha256:846ba1cd9ab4dfe4ba617a73a8e3a787bb8759688d0e3455c17c4512d60671af", size = 7370, upload-time = "2023-07-06T20:20:18.35Z" }
 
@@ -516,8 +533,8 @@ name = "faiss-cpu"
 version = "1.14.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging" },
 ]
 wheels = [
@@ -557,8 +574,8 @@ name = "h5py"
 version = "3.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/db/33/acd0ce6863b6c0d7735007df01815403f5589a21ff8c2e1ee2587a38f548/h5py-3.16.0.tar.gz", hash = "sha256:a0dbaad796840ccaa67a4c144a0d0c8080073c34c76d5a6941d6818678ef2738", size = 446526, upload-time = "2026-03-06T13:49:08.07Z" }
 wheels = [
@@ -650,7 +667,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
     { name = "fsspec" },
-    { name = "hf-xet", marker = "platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "hf-xet", marker = "platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging" },
     { name = "pyyaml" },
     { name = "requests" },
@@ -1020,7 +1037,7 @@ name = "nvidia-cublas"
 version = "13.1.1.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cuda-nvrtc", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cuda-nvrtc" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a7/a1/0bd24ee8c8d03adac032fd2909426a00c88f8c57961b1277ded97f91119f/nvidia_cublas-13.1.1.3-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:b7a210458267ac818974c53038fbec2e969d5c99f305ab15c72522fa9f001dd5", size = 542848918, upload-time = "2026-04-08T18:46:22.985Z" },
@@ -1063,7 +1080,7 @@ name = "nvidia-cudnn-cu13"
 version = "9.20.0.48"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cublas" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/56/c5/83384d846b2fd17c44bd499b36c75a45ed4f095fbbb2252294e89cea5c5c/nvidia_cudnn_cu13-9.20.0.48-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:e31454ae00094b0c55319d9d15b6fa2fc50a9e1c0f5c8c80fb75258234e731e1", size = 444574296, upload-time = "2026-03-09T19:28:27.751Z" },
@@ -1076,7 +1093,7 @@ name = "nvidia-cufft"
 version = "12.0.0.61"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-nvjitlink" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/ae/f417a75c0259e85c1d2f83ca4e960289a5f814ed0cea74d18c353d3e989d/nvidia_cufft-12.0.0.61-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:2708c852ef8cd89d1d2068bdbece0aa188813a0c934db3779b9b1faa8442e5f5", size = 214053554, upload-time = "2025-09-04T08:31:38.196Z" },
@@ -1108,9 +1125,9 @@ name = "nvidia-cusolver"
 version = "12.0.4.66"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-cusparse", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cublas" },
+    { name = "nvidia-cusparse" },
+    { name = "nvidia-nvjitlink" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/c3/b30c9e935fc01e3da443ec0116ed1b2a009bb867f5324d3f2d7e533e776b/nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:02c2457eaa9e39de20f880f4bd8820e6a1cfb9f9a34f820eb12a155aa5bc92d2", size = 223467760, upload-time = "2025-09-04T08:33:04.222Z" },
@@ -1123,7 +1140,7 @@ name = "nvidia-cusparse"
 version = "12.6.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-nvjitlink" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f8/94/5c26f33738ae35276672f12615a64bd008ed5be6d1ebcb23579285d960a9/nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:80bcc4662f23f1054ee334a15c72b8940402975e0eab63178fc7e670aa59472c", size = 162155568, upload-time = "2025-09-04T08:33:42.864Z" },
@@ -1184,8 +1201,8 @@ name = "opencv-python-headless"
 version = "4.13.0.92"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/79/42/2310883be3b8826ac58c3f2787b9358a2d46923d61f88fedf930bc59c60c/opencv_python_headless-4.13.0.92-cp37-abi3-macosx_13_0_arm64.whl", hash = "sha256:1a7d040ac656c11b8c38677cc8cccdc149f98535089dbe5b081e80a4e5903209", size = 46247192, upload-time = "2026-02-05T07:01:35.187Z" },
@@ -1215,10 +1232,10 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "python-dateutil", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "pytz", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "tzdata", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "python-dateutil", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "pytz", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "tzdata", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/33/01/d40b85317f86cf08d853a4f495195c73815fdf205eef3993821720274518/pandas-2.3.3.tar.gz", hash = "sha256:e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b", size = 4495223, upload-time = "2025-09-29T23:34:51.853Z" }
 wheels = [
@@ -1287,9 +1304,9 @@ resolution-markers = [
     "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "python-dateutil", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "tzdata", marker = "(python_full_version >= '3.11' and sys_platform == 'emscripten') or (python_full_version >= '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'emscripten' and sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "python-dateutil", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "tzdata", marker = "(python_full_version >= '3.11' and sys_platform == 'emscripten') or (python_full_version >= '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (sys_platform != 'emscripten' and sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform != 'emscripten' and sys_platform != 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'emscripten' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (sys_platform == 'win32' and extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f8/87/4341c6252d1c47b08768c3d25ac487362bf403f0313ddae4a2a26c9b1b4c/pandas-3.0.3.tar.gz", hash = "sha256:696a4a00a2a2a35d4e5deb3fc946641b96c944f02230e4f76137fe35d806c4fc", size = 4651414, upload-time = "2026-05-11T18:54:29.21Z" }
 wheels = [
@@ -1349,8 +1366,8 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "accelerate", version = "0.34.2", source = { registry = "https://pypi.org/simple" } },
     { name = "huggingface-hub" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging" },
     { name = "psutil" },
     { name = "pyyaml" },
@@ -1562,8 +1579,8 @@ name = "pycocotools"
 version = "2.0.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a2/df/32354b5dda963ffdfc8f75c9acf8828ef7890723a4ed57bb3ff2dc1d6f7e/pycocotools-2.0.11.tar.gz", hash = "sha256:34254d76da85576fcaf5c1f3aa9aae16b8cb15418334ba4283b800796bd1993d", size = 25381, upload-time = "2025-12-15T22:31:46.148Z" }
 wheels = [
@@ -1749,13 +1766,13 @@ name = "pytest"
 version = "8.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "exceptiongroup", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "exceptiongroup", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
     { name = "pygments" },
-    { name = "tomli", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "tomli", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a3/5c/00a0e072241553e1a7496d638deababa67c5058571567b92a7eaa258397c/pytest-8.4.2.tar.gz", hash = "sha256:86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01", size = 1519618, upload-time = "2025-09-04T14:34:22.711Z" }
 wheels = [
@@ -1861,7 +1878,7 @@ dependencies = [
     { name = "pytest" },
     { name = "torch" },
     { name = "transformers", version = "4.40.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "transformers", version = "4.57.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/55/4c/3836c034e7a042035706902bdc2df1135d33d84d3ab3667ae4b1ee51726b/radgraph-0.1.18.tar.gz", hash = "sha256:01c37f49a6f63580c3cd6168ecda8df84771ce48c9a84766f361e3cee7423b16", size = 587958, upload-time = "2025-06-18T13:15:31.933Z" }
 
@@ -2008,8 +2025,8 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "absl-py" },
     { name = "nltk" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e2/c5/9136736c37022a6ad27fea38f3111eb8f02fe75d067f9a985cc358653102/rouge_score-0.1.2.tar.gz", hash = "sha256:c7d4da2683e68c9abf0135ef915d63a46643666f848e558a1b9f7ead17ff0f04", size = 17400, upload-time = "2022-07-22T22:46:22.909Z" }
@@ -2071,10 +2088,10 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "joblib", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "threadpoolctl", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "joblib", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "threadpoolctl", marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/98/c2/a7855e41c9d285dfe86dc50b250978105dce513d6e459ea66a6aeb0e1e0c/scikit_learn-1.7.2.tar.gz", hash = "sha256:20e9e49ecd130598f1ca38a1d85090e1a600147b9c02fa6f15d69cb53d968fda", size = 7193136, upload-time = "2025-09-09T08:21:29.075Z" }
 wheels = [
@@ -2126,12 +2143,12 @@ resolution-markers = [
     "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "joblib", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "narwhals", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "threadpoolctl", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "joblib", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "narwhals", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "threadpoolctl", marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fa/6f/37092bdb25f712817231799fc5674d8e704066a8a70c1d2d40517e18b4ab/scikit_learn-1.9.0.tar.gz", hash = "sha256:8833266989d3a5110178a9fae30783675460724d0e1efb13b14901d2c660c557", size = 7750767, upload-time = "2026-06-02T11:54:32.706Z" }
 wheels = [
@@ -2175,7 +2192,7 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0f/37/6964b830433e654ec7485e45a00fc9a27cf868d622838f6b6d9c5ec0d532/scipy-1.15.3.tar.gz", hash = "sha256:eae3cf522bc7df64b42cad3925c876e1b0b6c35c1337c93e12c0f366f55b0eaf", size = 59419214, upload-time = "2025-05-08T16:13:05.955Z" }
 wheels = [
@@ -2236,7 +2253,7 @@ resolution-markers = [
     "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7a/97/5a3609c4f8d58b039179648e62dd220f89864f56f7357f5d4f45c29eb2cc/scipy-1.17.1.tar.gz", hash = "sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0", size = 30573822, upload-time = "2026-02-23T00:26:24.851Z" }
 wheels = [
@@ -2315,7 +2332,7 @@ resolution-markers = [
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a7/25/c2700dfaf6442b4effaa91af24ebce5dc9d31bb4a69706313aae70d72cd0/scipy-1.18.0.tar.gz", hash = "sha256:67b2ad2ad54c72ca6d04975a9b2df8c3638c34ddd5b28738e94fc2b57929d378", size = 30774447, upload-time = "2026-06-19T15:01:43.456Z" }
 wheels = [
@@ -2642,7 +2659,7 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "huggingface-hub", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "huggingface-hub", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/73/6f/f80cfef4a312e1fb34baf7d85c72d4411afde10978d4657f8cdd811d3ccc/tokenizers-0.22.2.tar.gz", hash = "sha256:473b83b915e547aa366d1eee11806deaf419e17be16310ac0a14077f1e28f917", size = 372115, upload-time = "2026-01-05T10:45:15.988Z" }
 wheels = [
@@ -2726,21 +2743,21 @@ name = "torch"
 version = "2.12.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-bindings", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "cuda-toolkit", extra = ["cudart", "cufft", "cufile", "cupti", "curand", "cusolver", "cusparse", "nvjitlink", "nvrtc", "nvtx"], marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "cuda-bindings", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "cuda-toolkit", extra = ["cudart", "cufft", "cufile", "cupti", "curand", "cusolver", "cusparse", "nvjitlink", "nvrtc", "nvtx"], marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "filelock" },
     { name = "fsspec" },
     { name = "jinja2" },
-    { name = "networkx", version = "3.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "networkx", version = "3.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-cublas", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-cudnn-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-cusparselt-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-nccl-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "nvidia-nvshmem-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "networkx", version = "3.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "networkx", version = "3.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cublas", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cudnn-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-cusparselt-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-nccl-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "nvidia-nvshmem-cu13", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "setuptools" },
     { name = "sympy" },
-    { name = "triton", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "triton", marker = "sys_platform == 'linux' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "typing-extensions" },
 ]
 wheels = [
@@ -2775,8 +2792,8 @@ name = "torchvision"
 version = "0.27.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "pillow" },
     { name = "torch" },
 ]
@@ -2812,7 +2829,7 @@ name = "tqdm"
 version = "4.68.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/87/d7/0535a28b1f5f24f6612fb3ff1e89fb1a8d160fee0f976e0aa6803862134b/tqdm-4.68.3.tar.gz", hash = "sha256:00dfa48452b6b6cfae3dd9885636c23d3422d1ec97c66d96818cbd5e0821d482", size = 170596, upload-time = "2026-06-17T07:36:52.105Z" }
 wheels = [
@@ -2838,8 +2855,8 @@ resolution-markers = [
 dependencies = [
     { name = "filelock", marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
     { name = "huggingface-hub", marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra == 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
     { name = "packaging", marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
     { name = "pyyaml", marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
     { name = "regex", marker = "extra == 'extra-17-adaptive-nesy-gen-chexagent'" },
@@ -2870,17 +2887,17 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "filelock", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "huggingface-hub", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra != 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra != 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
-    { name = "packaging", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "pyyaml", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "regex", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "requests", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "safetensors", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "tokenizers", version = "0.22.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
-    { name = "tqdm", marker = "extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "filelock", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "huggingface-hub", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and extra != 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and extra != 'extra-17-adaptive-nesy-gen-chexagent') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-lightweight') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medgemma') or (extra == 'extra-17-adaptive-nesy-gen-chexagent' and extra == 'extra-17-adaptive-nesy-gen-medsiglip')" },
+    { name = "packaging", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "pyyaml", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "regex", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "requests", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "safetensors", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "tokenizers", version = "0.22.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
+    { name = "tqdm", marker = "extra == 'extra-17-adaptive-nesy-gen-lightweight' or extra == 'extra-17-adaptive-nesy-gen-medgemma' or extra == 'extra-17-adaptive-nesy-gen-medsiglip' or extra != 'extra-17-adaptive-nesy-gen-chexagent'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c4/35/67252acc1b929dc88b6602e8c4a982e64f31e733b804c14bc24b47da35e6/transformers-4.57.6.tar.gz", hash = "sha256:55e44126ece9dc0a291521b7e5492b572e6ef2766338a610b9ab5afbb70689d3", size = 10134912, upload-time = "2026-01-16T10:38:39.284Z" }
 wheels = [

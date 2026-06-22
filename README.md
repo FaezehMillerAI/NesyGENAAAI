@@ -156,6 +156,39 @@ CheXagent QLoRA and MedGemma cannot share one Python process because of their in
 Transformers requirements. Run the corresponding notebook sections in separate Colab
 runtimes; both write the same JSONL experiment contract to Drive.
 
+## Recommended one-day lightweight run
+
+For a deadline-constrained run, use
+[`Lightweight_Adaptive_NeSy_Gen_One_Day_Colab.ipynb`](notebooks/Lightweight_Adaptive_NeSy_Gen_One_Day_Colab.ipynb).
+Its default drafter is `facebook/deit-tiny-patch16-224` plus
+`distilbert/distilgpt2` (roughly 90M parameters in total), with the image encoder
+frozen. It trains at 224×224, uses cached MedSigLIP neighbours in 70% of training
+prefixes, avoids laterality-breaking flips, resumes checkpoints, and generates the
+official test split only once. All graph/LTN/gate ablations then replay those drafts
+without reloading the model.
+
+```bash
+python -m pip install -e '.[lightweight]'
+python scripts/train_lightweight_vlm.py \
+  --manifest /path/to/manifest.jsonl \
+  --medsiglip-cache /path/to/train_index.npz \
+  --output-dir /content/drive/MyDrive/aaai_2026_experiments/lightweight/iuxray \
+  --max-steps 1500
+
+python scripts/run_experiments.py \
+  --manifest /path/to/manifest.jsonl \
+  --medsiglip-cache /path/to/train_index.npz \
+  --primekg-cache /path/to/primekg_cache \
+  --backend lightweight --drafting-mode few-shot \
+  --model-path /content/drive/MyDrive/aaai_2026_experiments/lightweight/iuxray/best_model \
+  --output /content/drive/MyDrive/aaai_2026_experiments/lightweight/iuxray/test.jsonl
+```
+
+Start with IU-Xray for rapid iteration, then transfer the chosen configuration to
+MIMIC-CXR. BLEU-1 ≥0.50 is recorded as a validation/test target, not guaranteed: the
+notebook always reports the measured score and keeps retrieval-only and neural-only
+baselines visible to prevent metric cherry-picking.
+
 ## MedGemma experiments
 
 ```bash

@@ -40,6 +40,27 @@ def test_manifest_and_index_are_train_only_and_study_unique():
     assert index.query(query.image_path, 0) == []
 
 
+def test_visual_query_is_cached_for_replayed_ablations():
+    class CountingEncoder(PixelHistogramEncoder):
+        def __init__(self):
+            super().__init__()
+            self.calls = 0
+
+        def encode(self, image_paths):
+            self.calls += 1
+            return super().encode(image_paths)
+
+    studies = load_manifest(DEMO / "manifest.csv")
+    encoder = CountingEncoder()
+    index, _ = VisualIndex.build(studies, encoder)
+    query = next(study for study in studies if study.split == "test")
+    calls_after_build = encoder.calls
+    first = index.query(query.image_path, 3, exclude_study_id=query.study_id)
+    second = index.query(query.image_path, 3, exclude_study_id=query.study_id)
+    assert encoder.calls == calls_after_build + 1
+    assert first == second
+
+
 def test_manifest_can_redact_test_references_at_ingestion():
     studies = load_manifest(DEMO / "manifest.csv", redact_splits={"test"})
     assert all(study.report for study in studies if study.split == "train")

@@ -137,6 +137,92 @@ def chexagent_prompt(indication: str, retrieved: list[RetrievedStudy]) -> str:
     ).strip()
 
 
+def lightweight_prompt(indication: str, retrieved: list[RetrievedStudy]) -> str:
+    """Compact decoder prefix used by the small trained vision-language model."""
+    compact_indication = re.sub(r"\s+", " ", indication).strip()[:160]
+    parts = [f"indication: {compact_indication or 'not provided'}"]
+    for index, item in enumerate(retrieved[:2], start=1):
+        compact_report = re.sub(r"\s+", " ", item.study.report).strip()[:240]
+        parts.append(f"similar {index}: {compact_report}")
+    parts.append("findings:")
+    return "\n".join(parts)
+
+
+class LightweightVisionLanguageBackend:
+    """A small DeiT/DistilGPT-2 encoder-decoder trained by the one-day workflow."""
+
+    def __init__(
+        self,
+        model_path: str | Path,
+        max_new_tokens: int = 128,
+        min_new_tokens: int = 8,
+        num_beams: int = 2,
+        use_retrieval: bool = True,
+    ):
+        try:
+            import torch
+            from transformers import (
+                AutoImageProcessor,
+                AutoTokenizer,
+                VisionEncoderDecoderModel,
+            )
+        except ImportError as exc:  # pragma: no cover - optional GPU dependency
+            raise RuntimeError("Install adaptive-nesy-gen[lightweight]") from exc
+        self.torch = torch
+        self.processor = AutoImageProcessor.from_pretrained(model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        self.model = VisionEncoderDecoderModel.from_pretrained(
+            model_path,
+            torch_dtype=dtype,
+            low_cpu_mem_usage=True,
+        )
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device).eval()
+        self.max_new_tokens = max_new_tokens
+        self.min_new_tokens = min_new_tokens
+        self.num_beams = num_beams
+        self.use_retrieval = use_retrieval
+
+    def generate(
+        self, image_path: str, indication: str, retrieved: list[RetrievedStudy]
+    ) -> str:  # pragma: no cover - trained GPU path
+        image = Image.open(image_path).convert("RGB")
+        pixel_values = self.processor(images=image, return_tensors="pt").pixel_values.to(
+            self.device, dtype=next(self.model.parameters()).dtype
+        )
+        evidence = retrieved if self.use_retrieval else []
+        prompt = lightweight_prompt(indication, evidence)
+        prompt_ids = self.tokenizer(
+            prompt,
+            return_tensors="pt",
+            add_special_tokens=False,
+            truncation=True,
+            max_length=192,
+        ).input_ids.to(self.device)
+        start_id = int(self.model.config.decoder_start_token_id)
+        if prompt_ids.shape[1] == 0 or int(prompt_ids[0, 0]) != start_id:
+            start = self.torch.full(
+                (prompt_ids.shape[0], 1), start_id, dtype=prompt_ids.dtype, device=self.device
+            )
+            prompt_ids = self.torch.cat([start, prompt_ids], dim=1)
+        with self.torch.inference_mode():
+            output = self.model.generate(
+                pixel_values=pixel_values,
+                decoder_input_ids=prompt_ids,
+                do_sample=False,
+                num_beams=self.num_beams,
+                min_new_tokens=self.min_new_tokens,
+                max_new_tokens=self.max_new_tokens,
+                no_repeat_ngram_size=3,
+                length_penalty=0.9,
+                early_stopping=True,
+                use_cache=True,
+            )[0]
+        generated = output[prompt_ids.shape[1] :]
+        return clean_findings_output(self.tokenizer.decode(generated, skip_special_tokens=True))
+
+
 class CheXagentBackend:
     """Frozen-vision CheXagent with an optional locally trained QLoRA adapter."""
 

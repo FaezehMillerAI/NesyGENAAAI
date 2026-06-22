@@ -204,6 +204,9 @@ class VisualIndex:
         self.studies = studies
         self.embeddings = _l2_normalize(embeddings.astype(np.float32))
         self.encoder = encoder
+        self._query_cache: dict[
+            tuple[str, int, str | None, str | None], tuple[RetrievedStudy, ...]
+        ] = {}
 
     @classmethod
     def build(cls, studies: list[Study], encoder: ImageEncoder) -> tuple[VisualIndex, float]:
@@ -265,6 +268,9 @@ class VisualIndex:
     ) -> list[RetrievedStudy]:
         if k <= 0:
             return []
+        cache_key = (image_path, k, exclude_study_id, exclude_patient_id)
+        if cache_key in self._query_cache:
+            return list(self._query_cache[cache_key])
         query = _l2_normalize(self.encoder.encode([image_path]).astype(np.float32))[0]
         scores = self.embeddings @ query
         ranked = np.argsort(-scores, kind="stable")
@@ -284,6 +290,7 @@ class VisualIndex:
             seen_studies.add(study.study_id)
             if len(results) == k:
                 break
+        self._query_cache[cache_key] = tuple(results)
         return results
 
 

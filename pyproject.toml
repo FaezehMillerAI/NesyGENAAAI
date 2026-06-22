@@ -32,6 +32,14 @@ medgemma = [
   "torch>=2.3,<3",
   "transformers>=4.50,<5",
 ]
+lightweight = [
+  "accelerate>=1.2,<2",
+  "faiss-cpu>=1.8,<2",
+  "safetensors>=0.4,<1",
+  "torch>=2.3,<3",
+  "torchvision>=0.18,<1",
+  "transformers>=4.50,<5",
+]
 chexagent = [
   "accelerate>=0.29,<1",
   "albumentations>=1.4,<2",
@@ -89,6 +97,10 @@ conflicts = [
   ],
   [
     { extra = "medsiglip" },
+    { extra = "chexagent" },
+  ],
+  [
+    { extra = "lightweight" },
     { extra = "chexagent" },
   ],
 ]

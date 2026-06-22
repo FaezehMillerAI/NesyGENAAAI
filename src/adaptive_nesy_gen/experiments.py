@@ -10,6 +10,13 @@ from .schema import PipelineConfig
 def ablation_configs(base: PipelineConfig | None = None) -> dict[str, PipelineConfig]:
     base = base or PipelineConfig()
     return {
+        "drafting_only": replace(
+            base,
+            enable_graph=False,
+            enable_ltn=False,
+            enable_gate=False,
+            enable_revision=False,
+        ),
         "rag_without_graph_ltn": replace(base, enable_graph=False, enable_ltn=False),
         "report_level_verification": replace(
             base, claim_level=False, always_verify=True, enable_revision=False

@@ -15,6 +15,7 @@ from tqdm.auto import tqdm
 
 from adaptive_nesy_gen.backends import (
     CheXagentBackend,
+    LightweightVisionLanguageBackend,
     MedGemmaBackend,
     RetrievalOnlyBackend,
     StaticBackend,
@@ -47,6 +48,11 @@ def load_drafts(path: Path | None) -> dict[str, str]:
 
 
 def backend_from_args(args):
+    if args.backend == "lightweight":
+        return LightweightVisionLanguageBackend(
+            model_path=args.model_path,
+            use_retrieval=args.drafting_mode == "few-shot",
+        )
     if args.backend == "chexagent":
         return CheXagentBackend(
             adapter=args.adapter,
@@ -92,11 +98,12 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument(
         "--backend",
-        choices=["chexagent", "medgemma", "retrieval", "replay"],
+        choices=["lightweight", "chexagent", "medgemma", "retrieval", "replay"],
         required=True,
     )
     parser.add_argument("--drafting-mode", choices=["zero-shot", "few-shot"], default="few-shot")
     parser.add_argument("--adapter", type=Path)
+    parser.add_argument("--model-path", type=Path)
     parser.add_argument("--drafts-jsonl", type=Path)
     parser.add_argument("--ablation", default="full_adaptive")
     parser.add_argument("--top-k", type=int, default=5)
@@ -114,6 +121,8 @@ def main() -> None:
 
     if args.backend == "replay" and not args.drafts_jsonl:
         parser.error("--drafts-jsonl is required for replay")
+    if args.backend == "lightweight" and not args.model_path:
+        parser.error("--model-path is required for the lightweight backend")
     if args.suite and args.backend != "replay":
         parser.error("--suite requires --backend replay")
     studies = load_manifest(args.manifest, redact_splits={"test"})
