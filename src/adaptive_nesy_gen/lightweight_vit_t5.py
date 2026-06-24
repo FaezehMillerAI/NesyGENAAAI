@@ -27,6 +27,8 @@ class FrozenViTFlanT5ReportModel:
                 super().__init__()
                 self.vision_encoder = vision_encoder
                 self.text_model = text_model
+                self.config = text_model.config
+                self.generation_config = getattr(text_model, "generation_config", None)
                 self.visual_tokens = int(visual_tokens)
                 self.train_text_encoder = bool(train_text_encoder)
                 self.train_embeddings = bool(train_embeddings)
@@ -154,6 +156,7 @@ class FrozenViTFlanT5ReportModel:
         text_source = path / "text_model"
         vision_encoder = AutoModel.from_pretrained(
             vision_source if vision_source.exists() else config["encoder"],
+            add_pooling_layer=False,
             torch_dtype=torch_dtype,
         )
         text_model = AutoModelForSeq2SeqLM.from_pretrained(

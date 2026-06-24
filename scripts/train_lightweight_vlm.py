@@ -272,7 +272,7 @@ def main() -> None:
     tokenizer = AutoTokenizer.from_pretrained(args.decoder, use_fast=True)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
-    vision_encoder = AutoModel.from_pretrained(args.encoder)
+    vision_encoder = AutoModel.from_pretrained(args.encoder, add_pooling_layer=False)
     text_model = AutoModelForSeq2SeqLM.from_pretrained(args.decoder)
     text_model.config.use_cache = False
     model = FrozenViTFlanT5ReportModel.create(

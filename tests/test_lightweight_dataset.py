@@ -3,6 +3,7 @@ from types import SimpleNamespace
 import numpy as np
 from PIL import Image
 
+from adaptive_nesy_gen.lightweight_vit_t5 import FrozenViTFlanT5ReportModel
 from adaptive_nesy_gen.schema import Study
 from scripts.train_lightweight_vlm import LightweightReportDataset
 
@@ -27,6 +28,27 @@ class FakeProcessor:
         return SimpleNamespace(pixel_values=[np.zeros((3, 8, 8), dtype=np.float32)])
 
 
+class FakeVisionEncoder:
+    config = SimpleNamespace(hidden_size=4)
+
+    def parameters(self):
+        return []
+
+
+class FakeTextModel:
+    config = SimpleNamespace(d_model=8)
+    generation_config = SimpleNamespace()
+    decoder = SimpleNamespace(parameters=lambda: [])
+    lm_head = SimpleNamespace(parameters=lambda: [])
+    encoder = SimpleNamespace(parameters=lambda: [])
+
+    def parameters(self):
+        return []
+
+    def get_input_embeddings(self):
+        return SimpleNamespace(parameters=lambda: [])
+
+
 def test_lightweight_dataset_masks_prefix_and_shifts_target(tmp_path):
     image_path = tmp_path / "image.png"
     Image.new("RGB", (8, 8)).save(image_path)
@@ -44,3 +66,10 @@ def test_lightweight_dataset_masks_prefix_and_shifts_target(tmp_path):
     assert len(row["input_ids"]) == len(row["attention_mask"])
     assert all(token != -100 for token in row["labels"])
     assert row["labels"][-1] == FakeTokenizer.eos_token_id
+
+
+def test_vit_t5_wrapper_exposes_trainer_config():
+    model = FrozenViTFlanT5ReportModel.create(FakeVisionEncoder(), FakeTextModel())
+
+    assert model.config is FakeTextModel.config
+    assert model.generation_config is FakeTextModel.generation_config
