@@ -1,3 +1,5 @@
+import ast
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -144,3 +146,18 @@ def test_vit_t5_forward_supplies_decoder_input_ids():
     assert output.loss.item() == 0.0
     assert text_model.seen_decoder_input_ids is not None
     assert text_model.seen_decoder_input_ids.shape == (2, 3)
+
+
+def test_lightweight_trainer_keeps_labels_for_custom_t5_forward():
+    script = Path("scripts/train_lightweight_vlm.py").read_text(encoding="utf-8")
+    tree = ast.parse(script)
+    smoothing_values = [
+        keyword.value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        for keyword in node.keywords
+        if keyword.arg == "label_smoothing_factor"
+    ]
+
+    assert smoothing_values
+    assert all(isinstance(value, ast.Constant) and value.value == 0.0 for value in smoothing_values)

@@ -325,7 +325,9 @@ def main() -> None:
         warmup_ratio=0.05,
         weight_decay=0.01,
         max_grad_norm=1.0,
-        label_smoothing_factor=0.05,
+        # Keep labels in the model call: the custom ViT→T5 wrapper shifts them into
+        # decoder_input_ids explicitly. HF label smoothing pops labels before forward.
+        label_smoothing_factor=0.0,
         bf16=use_bf16,
         fp16=not use_bf16,
         eval_strategy="steps",
