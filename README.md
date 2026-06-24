@@ -222,6 +222,12 @@ packet generation. This keeps the modeling contribution separable: RadReport-VL 
 the drafter, while Adaptive NeSy-Gen supplies the proposal's reasoning and
 verification layer.
 
+Do not use the older manual `%%writefile src/data/mimic_cxr_dataset.py` smoke-test
+cell for this workflow. That minimal loader only supports simple CSV folders and can
+fall back to synthetic random images when given a manifest path. Always run
+`scripts/prepare_radreport_vl_adapters.py` from this repository instead so RadReport-VL
+trains on the selected AAAI manifest and exports replay-compatible test drafts.
+
 ## MedGemma experiments
 
 ```bash
