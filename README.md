@@ -161,11 +161,12 @@ runtimes; both write the same JSONL experiment contract to Drive.
 For a deadline-constrained run, use
 [`Lightweight_Adaptive_NeSy_Gen_One_Day_Colab.ipynb`](notebooks/Lightweight_Adaptive_NeSy_Gen_One_Day_Colab.ipynb).
 Its default drafter is `facebook/deit-tiny-patch16-224` plus
-`distilbert/distilgpt2` (roughly 90M parameters in total), with the image encoder
-frozen. It trains at 224×224, uses cached MedSigLIP neighbours in 70% of training
-prefixes, avoids laterality-breaking flips, resumes checkpoints, and generates the
-official test split only once. All graph/LTN/gate ablations then replay those drafts
-without reloading the model.
+`google/flan-t5-small`: the DeiT vision transformer is frozen, and the default
+training scope updates only the T5 decoder/language head plus a small visual
+projection. It trains at 224×224, uses cached MedSigLIP neighbours in 70% of
+training prompts, avoids laterality-breaking flips, resumes checkpoints, and
+generates the official test split only once. All graph/LTN/gate ablations then
+replay those drafts without reloading the model.
 
 ```bash
 python -m pip install -e '.[lightweight]'

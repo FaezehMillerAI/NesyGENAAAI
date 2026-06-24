@@ -149,7 +149,7 @@ def lightweight_prompt(indication: str, retrieved: list[RetrievedStudy]) -> str:
 
 
 class LightweightVisionLanguageBackend:
-    """A small DeiT/DistilGPT-2 encoder-decoder trained by the one-day workflow."""
+    """A small frozen-ViT/text-decoder model trained by the one-day workflow."""
 
     def __init__(
         self,
@@ -160,6 +160,8 @@ class LightweightVisionLanguageBackend:
         use_retrieval: bool = True,
     ):
         try:
+            import json
+
             import torch
             from transformers import (
                 AutoImageProcessor,
@@ -172,11 +174,25 @@ class LightweightVisionLanguageBackend:
         self.processor = AutoImageProcessor.from_pretrained(model_path)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-        self.model = VisionEncoderDecoderModel.from_pretrained(
-            model_path,
-            torch_dtype=dtype,
-            low_cpu_mem_usage=True,
-        )
+        config_path = Path(model_path) / "config.json"
+        architecture = ""
+        if config_path.exists():
+            architecture = json.loads(config_path.read_text(encoding="utf-8")).get(
+                "architecture", ""
+            )
+        self.architecture = architecture
+        if architecture == "adaptive_nesy_gen_vit_flan_t5":
+            from adaptive_nesy_gen.lightweight_vit_t5 import FrozenViTFlanT5ReportModel
+
+            self.model = FrozenViTFlanT5ReportModel.from_pretrained(
+                model_path, torch_dtype=dtype
+            )
+        else:
+            self.model = VisionEncoderDecoderModel.from_pretrained(
+                model_path,
+                torch_dtype=dtype,
+                low_cpu_mem_usage=True,
+            )
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device).eval()
         self.max_new_tokens = max_new_tokens
@@ -196,10 +212,31 @@ class LightweightVisionLanguageBackend:
         prompt_ids = self.tokenizer(
             prompt,
             return_tensors="pt",
-            add_special_tokens=False,
+            add_special_tokens=self.architecture == "adaptive_nesy_gen_vit_flan_t5",
             truncation=True,
             max_length=192,
-        ).input_ids.to(self.device)
+        )
+        input_ids = prompt_ids.input_ids.to(self.device)
+        attention_mask = prompt_ids.attention_mask.to(self.device)
+        if self.architecture == "adaptive_nesy_gen_vit_flan_t5":
+            with self.torch.inference_mode():
+                output = self.model.generate_reports(
+                    pixel_values=pixel_values,
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    do_sample=False,
+                    num_beams=self.num_beams,
+                    min_new_tokens=self.min_new_tokens,
+                    max_new_tokens=self.max_new_tokens,
+                    no_repeat_ngram_size=3,
+                    length_penalty=0.9,
+                    early_stopping=True,
+                    use_cache=True,
+                )[0]
+            return clean_findings_output(
+                self.tokenizer.decode(output, skip_special_tokens=True)
+            )
+        prompt_ids = input_ids
         start_id = int(self.model.config.decoder_start_token_id)
         if prompt_ids.shape[1] == 0 or int(prompt_ids[0, 0]) != start_id:
             start = self.torch.full(

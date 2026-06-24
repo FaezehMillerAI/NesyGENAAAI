@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Train the fast Adaptive NeSy-Gen drafting model.
 
-The default model combines a 5.7M-parameter DeiT-tiny image encoder with an
-82M-parameter DistilGPT-2 decoder. The encoder stays frozen; training updates the
-decoder, the newly initialized cross-attention, and the encoder-to-decoder projection.
+The default model combines a frozen DeiT-tiny vision transformer with a lightweight
+Flan-T5-small text generator. The visual transformer always stays frozen; by default
+training updates only the T5 decoder/language head plus a small visual projection.
 This is intended for a single Colab GPU and resumes automatically.
 """
 
@@ -85,14 +85,13 @@ def neighbour_indices(
 
 
 class LightweightReportDataset:
-    """Image/prefix/report examples with prompt loss masked out."""
+    """Image/prompt/report examples for frozen-ViT + T5-style generation."""
 
     def __init__(
         self,
         studies,
         tokenizer,
         processor,
-        decoder_start_token_id: int,
         neighbours: np.ndarray | None = None,
         rag_probability: float = 0.7,
         max_prompt_tokens: int = 160,
@@ -103,7 +102,6 @@ class LightweightReportDataset:
         self.studies = studies
         self.tokenizer = tokenizer
         self.processor = processor
-        self.decoder_start_token_id = decoder_start_token_id
         self.neighbours = neighbours
         self.rag_probability = rag_probability
         self.max_prompt_tokens = max_prompt_tokens
@@ -137,22 +135,19 @@ class LightweightReportDataset:
             truncation=True,
             max_length=self.max_prompt_tokens,
         ).input_ids
-        target_ids = self.tokenizer(
+        target = self.tokenizer(
             study.report,
-            add_special_tokens=False,
+            add_special_tokens=True,
             truncation=True,
-            max_length=self.max_target_tokens - 1,
-        ).input_ids
-        target_ids = [*target_ids, self.tokenizer.eos_token_id]
-        full = [*prompt_ids, *target_ids]
-        decoder_input_ids = [self.decoder_start_token_id, *full[:-1]]
-        labels = [-100] * len(prompt_ids) + target_ids
-        if len(decoder_input_ids) != len(labels) or not target_ids:
+            max_length=self.max_target_tokens,
+        )
+        labels = list(target.input_ids)
+        if not prompt_ids or not labels:
             raise AssertionError(f"Invalid decoder target for {study.study_id}")
         return {
             "pixel_values": pixel_values,
-            "decoder_input_ids": decoder_input_ids,
-            "decoder_attention_mask": [1] * len(decoder_input_ids),
+            "input_ids": prompt_ids,
+            "attention_mask": [1] * len(prompt_ids),
             "labels": labels,
         }
 
@@ -185,20 +180,22 @@ class LightweightCollator:
     def __call__(self, rows):
         import torch
 
-        length = max(len(row["decoder_input_ids"]) for row in rows)
+        input_length = max(len(row["input_ids"]) for row in rows)
+        label_length = max(len(row["labels"]) for row in rows)
         batch = len(rows)
-        decoder_input_ids = torch.full((batch, length), self.pad_token_id, dtype=torch.long)
-        decoder_attention_mask = torch.zeros((batch, length), dtype=torch.long)
-        labels = torch.full((batch, length), -100, dtype=torch.long)
+        input_ids = torch.full((batch, input_length), self.pad_token_id, dtype=torch.long)
+        attention_mask = torch.zeros((batch, input_length), dtype=torch.long)
+        labels = torch.full((batch, label_length), -100, dtype=torch.long)
         for index, row in enumerate(rows):
-            size = len(row["decoder_input_ids"])
-            decoder_input_ids[index, :size] = torch.tensor(row["decoder_input_ids"])
-            decoder_attention_mask[index, :size] = 1
-            labels[index, :size] = torch.tensor(row["labels"])
+            input_size = len(row["input_ids"])
+            label_size = len(row["labels"])
+            input_ids[index, :input_size] = torch.tensor(row["input_ids"])
+            attention_mask[index, :input_size] = 1
+            labels[index, :label_size] = torch.tensor(row["labels"])
         return {
             "pixel_values": torch.stack([row["pixel_values"] for row in rows]),
-            "decoder_input_ids": decoder_input_ids,
-            "decoder_attention_mask": decoder_attention_mask,
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
             "labels": labels,
         }
 
@@ -217,7 +214,18 @@ def main() -> None:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--medsiglip-cache", type=Path)
     parser.add_argument("--encoder", default="facebook/deit-tiny-patch16-224")
-    parser.add_argument("--decoder", default="distilbert/distilgpt2")
+    parser.add_argument("--decoder", default="google/flan-t5-small")
+    parser.add_argument("--visual-tokens", type=int, default=32)
+    parser.add_argument(
+        "--train-text-encoder",
+        action="store_true",
+        help="Also update the T5 encoder. Default keeps it frozen for decoder-scoped training.",
+    )
+    parser.add_argument(
+        "--train-embeddings",
+        action="store_true",
+        help="Also update shared T5 token embeddings. Default keeps them frozen.",
+    )
     parser.add_argument("--max-steps", type=int, default=1500)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--gradient-accumulation", type=int, default=2)
@@ -232,14 +240,17 @@ def main() -> None:
     import torch
     from transformers import (
         AutoImageProcessor,
+        AutoModel,
+        AutoModelForSeq2SeqLM,
         AutoTokenizer,
         EarlyStoppingCallback,
         Trainer,
         TrainingArguments,
-        VisionEncoderDecoderModel,
         set_seed,
     )
     from transformers.trainer_utils import get_last_checkpoint
+
+    from adaptive_nesy_gen.lightweight_vit_t5 import FrozenViTFlanT5ReportModel
 
     if not torch.cuda.is_available():
         raise RuntimeError("Lightweight training requires a CUDA Colab runtime")
@@ -261,18 +272,16 @@ def main() -> None:
     tokenizer = AutoTokenizer.from_pretrained(args.decoder, use_fast=True)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
-    model = VisionEncoderDecoderModel.from_encoder_decoder_pretrained(
-        args.encoder,
-        args.decoder,
-        decoder_add_cross_attention=True,
+    vision_encoder = AutoModel.from_pretrained(args.encoder)
+    text_model = AutoModelForSeq2SeqLM.from_pretrained(args.decoder)
+    text_model.config.use_cache = False
+    model = FrozenViTFlanT5ReportModel.create(
+        vision_encoder,
+        text_model,
+        visual_tokens=args.visual_tokens,
+        train_text_encoder=args.train_text_encoder,
+        train_embeddings=args.train_embeddings,
     )
-    model.config.decoder_start_token_id = tokenizer.bos_token_id or tokenizer.eos_token_id
-    model.config.pad_token_id = tokenizer.pad_token_id
-    model.config.eos_token_id = tokenizer.eos_token_id
-    model.config.vocab_size = model.config.decoder.vocab_size
-    model.config.decoder.use_cache = False
-    for parameter in model.encoder.parameters():
-        parameter.requires_grad_(False)
     trainable = sum(
         parameter.numel() for parameter in model.parameters() if parameter.requires_grad
     )
@@ -291,7 +300,6 @@ def main() -> None:
         train,
         tokenizer,
         processor,
-        model.config.decoder_start_token_id,
         neighbours=neighbours,
         rag_probability=args.rag_probability,
         training=True,
@@ -301,7 +309,6 @@ def main() -> None:
         validation,
         tokenizer,
         processor,
-        model.config.decoder_start_token_id,
         training=False,
         seed=args.seed,
     )
@@ -351,14 +358,22 @@ def main() -> None:
     resume = get_last_checkpoint(str(checkpoint_dir)) if checkpoint_dir.exists() else None
     trainer.train(resume_from_checkpoint=resume)
     final_dir = args.output_dir / "best_model"
-    model.config.decoder.use_cache = True
-    trainer.save_model(str(final_dir))
-    tokenizer.save_pretrained(final_dir)
-    processor.save_pretrained(final_dir)
+    model.text_model.config.use_cache = True
+    model.save_for_generation(
+        final_dir,
+        encoder_id=args.encoder,
+        decoder_id=args.decoder,
+        tokenizer=tokenizer,
+        processor=processor,
+    )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     summary = {
+        "architecture": "vit-flan-t5",
         "encoder": args.encoder,
         "decoder": args.decoder,
+        "visual_tokens": args.visual_tokens,
+        "train_text_encoder": args.train_text_encoder,
+        "train_embeddings": args.train_embeddings,
         "total_parameters": total,
         "trainable_parameters": trainable,
         "train_examples": len(train),

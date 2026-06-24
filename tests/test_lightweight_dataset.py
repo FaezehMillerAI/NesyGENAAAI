@@ -11,9 +11,11 @@ class FakeTokenizer:
     eos_token_id = 99
 
     def __call__(self, text, **kwargs):
-        del kwargs
         # Stable token counts are sufficient to verify shifting and loss masking.
-        return SimpleNamespace(input_ids=list(range(1, len(text.split()) + 1)))
+        tokens = list(range(1, len(text.split()) + 1))
+        if kwargs.get("add_special_tokens"):
+            tokens.append(self.eos_token_id)
+        return SimpleNamespace(input_ids=tokens)
 
 
 class FakeProcessor:
@@ -33,15 +35,12 @@ def test_lightweight_dataset_masks_prefix_and_shifts_target(tmp_path):
         [study],
         FakeTokenizer(),
         FakeProcessor(),
-        decoder_start_token_id=77,
         training=False,
     )
 
     row = dataset[0]
 
-    assert row["decoder_input_ids"][0] == 77
-    assert len(row["decoder_input_ids"]) == len(row["labels"])
+    assert row["input_ids"]
+    assert len(row["input_ids"]) == len(row["attention_mask"])
+    assert all(token != -100 for token in row["labels"])
     assert row["labels"][-1] == FakeTokenizer.eos_token_id
-    first_target = next(index for index, token in enumerate(row["labels"]) if token != -100)
-    assert first_target > 0
-    assert row["decoder_input_ids"][first_target + 1] == row["labels"][first_target]
