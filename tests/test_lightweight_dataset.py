@@ -73,3 +73,74 @@ def test_vit_t5_wrapper_exposes_trainer_config():
 
     assert model.config is FakeTextModel.config
     assert model.generation_config is FakeTextModel.generation_config
+
+
+def test_vit_t5_forward_supplies_decoder_input_ids():
+    torch = __import__("torch")
+    nn = torch.nn
+
+    class TinyVisionEncoder(nn.Module):
+        config = SimpleNamespace(hidden_size=4)
+
+        def forward(self, pixel_values, return_dict):
+            assert return_dict
+            batch = pixel_values.shape[0]
+            hidden = torch.ones(batch, 3, 4, device=pixel_values.device)
+            return SimpleNamespace(last_hidden_state=hidden)
+
+    class TinyEncoder(nn.Module):
+        def forward(self, inputs_embeds, attention_mask, return_dict):
+            assert attention_mask.shape[1] == inputs_embeds.shape[1]
+            assert return_dict
+            return SimpleNamespace(last_hidden_state=inputs_embeds)
+
+    class TinyTextModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.config = SimpleNamespace(d_model=8)
+            self.generation_config = SimpleNamespace()
+            self.encoder = TinyEncoder()
+            self.decoder = nn.Linear(8, 8)
+            self.lm_head = nn.Linear(8, 16)
+            self.embedding = nn.Embedding(16, 8)
+            self.seen_decoder_input_ids = None
+
+        def get_input_embeddings(self):
+            return self.embedding
+
+        def _shift_right(self, labels):
+            shifted = labels.new_full(labels.shape, 0)
+            shifted[:, 1:] = labels[:, :-1].clamp_min(0)
+            return shifted
+
+        def forward(
+            self,
+            encoder_outputs,
+            attention_mask,
+            decoder_input_ids=None,
+            labels=None,
+            return_dict=True,
+        ):
+            del encoder_outputs, attention_mask
+            assert return_dict
+            assert decoder_input_ids is not None
+            assert labels is not None
+            self.seen_decoder_input_ids = decoder_input_ids
+            return SimpleNamespace(loss=torch.tensor(0.0))
+
+    text_model = TinyTextModel()
+    model = FrozenViTFlanT5ReportModel.create(
+        TinyVisionEncoder(),
+        text_model,
+        visual_tokens=2,
+    )
+    output = model(
+        pixel_values=torch.zeros(2, 3, 8, 8),
+        input_ids=torch.ones(2, 4, dtype=torch.long),
+        attention_mask=torch.ones(2, 4, dtype=torch.long),
+        labels=torch.tensor([[4, 5, 6], [7, -100, 8]]),
+    )
+
+    assert output.loss.item() == 0.0
+    assert text_model.seen_decoder_input_ids is not None
+    assert text_model.seen_decoder_input_ids.shape == (2, 3)

@@ -85,12 +85,16 @@ class FrozenViTFlanT5ReportModel:
                 return encoder_outputs, combined_mask
 
             def forward(self, pixel_values, input_ids, attention_mask, labels=None, **_):
+                if labels is None:
+                    raise ValueError("FrozenViTFlanT5ReportModel.forward requires labels")
                 encoder_outputs, combined_mask = self.encode_context(
                     pixel_values, input_ids, attention_mask
                 )
+                decoder_input_ids = self.text_model._shift_right(labels)
                 return self.text_model(
                     encoder_outputs=encoder_outputs,
                     attention_mask=combined_mask,
+                    decoder_input_ids=decoder_input_ids,
                     labels=labels,
                     return_dict=True,
                 )
