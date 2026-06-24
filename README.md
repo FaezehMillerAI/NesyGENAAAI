@@ -195,6 +195,33 @@ MIMIC-CXR. BLEU-1 ≥0.50 is recorded as a validation/test target, not guarantee
 notebook always reports the measured score and keeps retrieval-only and neural-only
 baselines visible to prevent metric cherry-picking.
 
+## RadReport-VL drafter + Adaptive NeSy-Gen verifier
+
+To use [`VivaanGupta17/radreport-vl`](https://github.com/VivaanGupta17/radreport-vl)
+as the starting report-generation model without changing its vision encoder,
+cross-attention bridge, decoder, or classifier, open
+[`RadReport_VL_Adaptive_NeSy_Gen_Colab.ipynb`](notebooks/RadReport_VL_Adaptive_NeSy_Gen_Colab.ipynb).
+
+The notebook installs two adapter files into a cloned RadReport-VL checkout and
+applies one tokenizer-compatibility patch:
+
+- a manifest-backed `src.data.mimic_cxr_dataset` module, because the upstream
+  repository imports that module but does not currently ship it;
+- a draft exporter that loads a RadReport-VL checkpoint and writes reference-free
+  test drafts in the Adaptive NeSy-Gen replay contract.
+- a training-script patch that resizes only the decoder token embedding/output
+  tables after RadReport-VL extends its tokenizer, then saves the tokenizer beside
+  checkpoints. The ViT encoder, bridge layers, decoder stack, and classifier are
+  otherwise unchanged.
+
+After RadReport-VL drafts are exported, the existing Adaptive NeSy-Gen pipeline
+replays them through retrieval grounding, PrimeKG path validation, LTN constraint
+scores, gate/revision decisions, graph-control ablations, integrity audits,
+official text/clinical metrics, bootstrap intervals, and blinded expert-review
+packet generation. This keeps the modeling contribution separable: RadReport-VL is
+the drafter, while Adaptive NeSy-Gen supplies the proposal's reasoning and
+verification layer.
+
 ## MedGemma experiments
 
 ```bash
