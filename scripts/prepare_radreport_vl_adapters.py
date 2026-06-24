@@ -201,6 +201,11 @@ class ManifestCXRDataset(Dataset):
     ):
         rows = _manifest_rows(root_dir, split, max_samples=max_samples)
         if rows is None:
+            if os.environ.get("RADREPORT_VL_ALLOW_SYNTHETIC") != "1":
+                raise FileNotFoundError(
+                    f"No manifest found at {root_dir}. Set RADREPORT_VL_ALLOW_SYNTHETIC=1 "
+                    "only for an explicit smoke test with random images."
+                )
             print(f"[WARN] No manifest found at {root_dir}; using synthetic {split} data.")
             rows = [
                 ManifestRow(
@@ -214,6 +219,11 @@ class ManifestCXRDataset(Dataset):
                 )
                 for _ in range(max_samples or 32)
             ]
+        if not rows:
+            raise ValueError(
+                f"Manifest {root_dir} contains no usable rows for split={split!r}. "
+                "Check split names, report fields, and image_path fields."
+            )
         self.rows = _maybe_cache_images(rows, split)
         self.tokenizer = tokenizer
         self.image_size = image_size
