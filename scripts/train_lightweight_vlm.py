@@ -10,12 +10,17 @@ This is intended for a single Colab GPU and resumes automatically.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import random
+import re
+import shutil
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from tqdm.auto import tqdm
 
 from adaptive_nesy_gen.backends import lightweight_prompt
 from adaptive_nesy_gen.retrieval import load_manifest
@@ -97,6 +102,7 @@ class LightweightReportDataset:
         max_prompt_tokens: int = 160,
         max_target_tokens: int = 128,
         training: bool = False,
+        augment_images: bool = True,
         seed: int = 13,
     ):
         self.studies = studies
@@ -107,6 +113,7 @@ class LightweightReportDataset:
         self.max_prompt_tokens = max_prompt_tokens
         self.max_target_tokens = max_target_tokens
         self.training = training
+        self.augment_images = augment_images
         self.seed = seed
 
     def __len__(self):
@@ -126,7 +133,7 @@ class LightweightReportDataset:
     def __getitem__(self, index):
         study = self.studies[index]
         image = Image.open(study.image_path).convert("RGB")
-        if self.training:
+        if self.training and self.augment_images:
             image = self._augment(image)
         pixel_values = self.processor(images=image, return_tensors="pt").pixel_values[0]
         prompt_ids = self.tokenizer(
@@ -208,6 +215,41 @@ def _limited(rows, limit: int, seed: int):
     return [rows[index] for index in sorted(order[:limit])]
 
 
+def _cache_path(cache_dir: Path, study) -> Path:
+    suffix = Path(study.image_path).suffix.lower() or ".png"
+    digest = hashlib.sha1(f"{study.study_id}\0{study.image_path}".encode()).hexdigest()[:16]
+    safe_study_id = re.sub(r"[^A-Za-z0-9_.-]+", "_", study.study_id)[:80] or "study"
+    return cache_dir / study.split / f"{safe_study_id}_{digest}{suffix}"
+
+
+def materialize_images(studies, cache_dir: Path | None):
+    """Copy Drive-backed images to local SSD once, returning studies with local paths."""
+    if cache_dir is None:
+        return studies
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cached = []
+    copied = 0
+    for study in tqdm(studies, desc=f"Image cache → {cache_dir}", unit="image"):
+        source = Path(study.image_path)
+        target = _cache_path(cache_dir, study)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists() or target.stat().st_size == 0:
+            shutil.copy2(source, target)
+            copied += 1
+        cached.append(replace(study, image_path=str(target)))
+    print(
+        json.dumps(
+            {
+                "image_cache_dir": str(cache_dir),
+                "images_total": len(cached),
+                "images_copied": copied,
+                "images_reused": len(cached) - copied,
+            }
+        )
+    )
+    return cached
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", required=True, type=Path)
@@ -233,6 +275,13 @@ def main() -> None:
     parser.add_argument("--rag-probability", type=float, default=0.7)
     parser.add_argument("--max-train-examples", type=int, default=0)
     parser.add_argument("--max-val-examples", type=int, default=512)
+    parser.add_argument("--image-cache-dir", type=Path)
+    parser.add_argument(
+        "--no-augmentation",
+        action="store_true",
+        help="Disable CPU image augmentation for the fastest one-day deadline run.",
+    )
+    parser.add_argument("--dataloader-num-workers", type=int, default=4)
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--torch-compile", action="store_true")
     args = parser.parse_args()
@@ -268,7 +317,7 @@ def main() -> None:
     if any(study.report for study in studies if study.split == "test"):
         raise AssertionError("Test-reference firewall failed")
 
-    processor = AutoImageProcessor.from_pretrained(args.encoder)
+    processor = AutoImageProcessor.from_pretrained(args.encoder, use_fast=True)
     tokenizer = AutoTokenizer.from_pretrained(args.decoder, use_fast=True)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -296,6 +345,9 @@ def main() -> None:
             train,
             args.output_dir / "training_neighbours.npz",
         )
+    if args.image_cache_dir:
+        train = materialize_images(train, args.image_cache_dir)
+        validation = materialize_images(validation, args.image_cache_dir)
     train_dataset = LightweightReportDataset(
         train,
         tokenizer,
@@ -303,6 +355,7 @@ def main() -> None:
         neighbours=neighbours,
         rag_probability=args.rag_probability,
         training=True,
+        augment_images=not args.no_augmentation,
         seed=args.seed,
     )
     val_dataset = LightweightReportDataset(
@@ -340,7 +393,7 @@ def main() -> None:
         greater_is_better=False,
         logging_steps=10,
         disable_tqdm=False,
-        dataloader_num_workers=2,
+        dataloader_num_workers=args.dataloader_num_workers,
         dataloader_pin_memory=True,
         remove_unused_columns=False,
         report_to="none",
@@ -385,6 +438,9 @@ def main() -> None:
         "best_eval_loss": trainer.state.best_metric,
         "test_examples_consumed": 0,
         "horizontal_flip": False,
+        "augmentation": not args.no_augmentation,
+        "image_cache_dir": str(args.image_cache_dir) if args.image_cache_dir else None,
+        "dataloader_num_workers": args.dataloader_num_workers,
     }
     (args.output_dir / "training_summary.json").write_text(
         json.dumps(summary, indent=2), encoding="utf-8"

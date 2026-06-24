@@ -165,8 +165,11 @@ Its default drafter is `facebook/deit-tiny-patch16-224` plus
 training scope updates only the T5 decoder/language head plus a small visual
 projection. It trains at 224×224, uses cached MedSigLIP neighbours in 70% of
 training prompts, avoids laterality-breaking flips, resumes checkpoints, and
-generates the official test split only once. All graph/LTN/gate ablations then
-replay those drafts without reloading the model.
+generates the official test split only once. The Colab notebook copies Drive-backed
+images to `/content` SSD and disables CPU augmentation by default; this avoids the
+30-second dataloader stalls that appear when PIL repeatedly reads images from
+Google Drive. All graph/LTN/gate ablations then replay those drafts without
+reloading the model.
 
 ```bash
 python -m pip install -e '.[lightweight]'
@@ -174,6 +177,8 @@ python scripts/train_lightweight_vlm.py \
   --manifest /path/to/manifest.jsonl \
   --medsiglip-cache /path/to/train_index.npz \
   --output-dir /content/drive/MyDrive/aaai_2026_experiments/lightweight/iuxray \
+  --image-cache-dir /content/adaptive_nesy_gen_image_cache/iuxray \
+  --no-augmentation \
   --max-steps 1500
 
 python scripts/run_experiments.py \
